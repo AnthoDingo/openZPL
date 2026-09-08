@@ -1,0 +1,14 @@
+bin/
+obj/
+data/
+*.user
+
+# Chemin par défaut suggéré (mais jamais utilisé) par l'étape SQLite du wizard /setup — voir le
+# commentaire dans XChangeSetupInitializer.cs. Un fichier ici est un artefact de test local orphelin.
+App_Data/
+
+.vs/
+
+# Written by AnthoDingo.Setup at the end of the /setup wizard (connection string + install state).
+# Never commit this — see src/XChange.Host/Setup/XChangeSetupInitializer.cs.
+appsettings.local.json

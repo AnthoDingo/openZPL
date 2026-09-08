@@ -1,0 +1,153 @@
+// openZPL
+// Copyright (C) 2026 AnthoDingo
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+
+namespace openZPL.Models;
+
+public enum LabelElementType { Text, Barcode, Image }
+public enum LabelBarcodeType { Code128, QRCode, DataMatrix }
+public enum LabelHAlign { Left, Center, Right }
+public enum LabelVAlign { Top, Middle, Bottom }
+
+/// <summary>
+/// Element positionnable sur une etiquette. Les proprietes inutilisees selon
+/// Type sont ignorees. Variables supportees dans Text/BarcodeValue :
+/// {{BoxBarcode}}, {{PartReference}}, {{PartName}}, {{Quantity}}, {{Unit}},
+/// {{Date}}, {{Operator}}.
+/// </summary>
+public partial class LabelElement : ObservableObject
+{
+    public string Id { get; init; } = Guid.NewGuid().ToString("N")[..8];
+
+    [ObservableProperty] private LabelElementType _type;
+    [ObservableProperty] private int _x;
+    [ObservableProperty] private int _y;
+    [ObservableProperty] private int _width = 200;
+    [ObservableProperty] private int _height = 40;
+
+    [ObservableProperty] private LabelHAlign _hAlign = LabelHAlign.Left;
+    [ObservableProperty] private LabelVAlign _vAlign = LabelVAlign.Middle;
+
+    // Texte
+    [ObservableProperty] private string? _text;
+    [ObservableProperty] private int _fontSize = 24;
+    [ObservableProperty] private bool _bold;
+    [ObservableProperty] private bool _italic;
+
+    // Code-barres — la hauteur des barres suit Height (pas de parametre dedie)
+    [ObservableProperty] private string? _barcodeValue;
+    [ObservableProperty] private LabelBarcodeType _barcodeType = LabelBarcodeType.Code128;
+    [ObservableProperty] private bool _showHri = true;
+
+    // Image — PNG/JPG encode en base64 (data:image/png;base64,...)
+    [ObservableProperty] private string? _imageData;
+
+    /// <summary>Etat UI uniquement (surbrillance dans le canvas) — non persiste.</summary>
+    [ObservableProperty]
+    [property: System.Text.Json.Serialization.JsonIgnore]
+    private bool _isSelected;
+
+    public LabelElement Clone()
+    {
+        return new LabelElement
+        {
+            Type = Type,
+            X = X,
+            Y = Y,
+            Width = Width,
+            Height = Height,
+            HAlign = HAlign,
+            VAlign = VAlign,
+            Text = Text,
+            FontSize = FontSize,
+            Bold = Bold,
+            Italic = Italic,
+            BarcodeValue = BarcodeValue,
+            BarcodeType = BarcodeType,
+            ShowHri = ShowHri,
+            ImageData = ImageData,
+        };
+    }
+}
+
+/// <summary>
+/// Template d'etiquette pour imprimante Zebra (ZPL II).
+/// </summary>
+public partial class LabelTemplate : ObservableObject
+{
+    public string Id { get; init; } = Guid.NewGuid().ToString("N");
+
+    [ObservableProperty] private string _name = "Nouveau modele";
+
+    /// <summary>Template par defaut utilise pour l'impression.</summary>
+    [ObservableProperty] private bool _isDefault;
+
+    /// <summary>Largeur en dots (203 DPI). Ex: 812 = 4"</summary>
+    [ObservableProperty] private int _widthDots = 812;
+
+    /// <summary>Hauteur en dots (203 DPI). Ex: 406 = 2"</summary>
+    [ObservableProperty] private int _heightDots = 406;
+
+    /// <summary>Resolution DPI de l'imprimante cible.</summary>
+    [ObservableProperty] private int _dpi = 203;
+
+    [ObservableProperty] private DateTime _updatedAt = DateTime.Now;
+
+    public ObservableCollection<LabelElement> Elements { get; set; } = [];
+
+    // ── Conversion dots <-> mm : dots = mm x DPI / 25.4 ─────────────────────
+
+    [System.Text.Json.Serialization.JsonIgnore]
+    public double WidthMm
+    {
+        get => Math.Round(WidthDots * 25.4 / Dpi, 1);
+        set => WidthDots = Math.Max(1, (int)Math.Round(value * Dpi / 25.4));
+    }
+
+    [System.Text.Json.Serialization.JsonIgnore]
+    public double HeightMm
+    {
+        get => Math.Round(HeightDots * 25.4 / Dpi, 1);
+        set => HeightDots = Math.Max(1, (int)Math.Round(value * Dpi / 25.4));
+    }
+
+    partial void OnWidthDotsChanged(int value) => OnPropertyChanged(nameof(WidthMm));
+    partial void OnHeightDotsChanged(int value) => OnPropertyChanged(nameof(HeightMm));
+
+    partial void OnDpiChanged(int value)
+    {
+        OnPropertyChanged(nameof(WidthMm));
+        OnPropertyChanged(nameof(HeightMm));
+    }
+
+    public LabelTemplate Clone(string newName)
+    {
+        var copy = new LabelTemplate
+        {
+            Name = newName,
+            IsDefault = false,
+            WidthDots = WidthDots,
+            HeightDots = HeightDots,
+            Dpi = Dpi,
+            UpdatedAt = DateTime.Now,
+        };
+        foreach (LabelElement el in Elements)
+            copy.Elements.Add(el.Clone());
+        return copy;
+    }
+}
