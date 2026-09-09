@@ -1,10 +1,9 @@
 ; openZPL - script Inno Setup
 ;
 ; Avant de compiler ce script, publier l'application en mode autonome
-; (self-contained, un seul executable) depuis la racine du depot :
+; (self-contained) depuis la racine du depot :
 ;
 ;   dotnet publish src\openZPL.csproj -c Release -r win-x64 --self-contained true ^
-;       -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true ^
 ;       -o src\bin\Release\net10.0-windows\win-x64\publish
 ;
 ; Puis compiler avec l'EDI Inno Setup ou en ligne de commande :
@@ -186,8 +185,9 @@ end;
   installee au meme emplacement, repart d'un dossier propre pour ne pas
   laisser trainer d'anciens fichiers que la nouvelle version ne contient
   plus (DLL renommee ou retiree entre deux versions, par exemple). Les
-  preferences utilisateur sont hors de {app} (voir Services/AppSettings.cs,
-  qui les ecrit dans %AppData%\openZPL), rien n'est perdu. Le controle sur
+  preferences utilisateur sont hors du dossier d'installation (voir
+  Services/AppSettings.cs, qui les ecrit dans %AppData%\openZPL), rien n'est
+  perdu. Le controle sur
   la presence de l'executable evite de purger un dossier qui ne serait pas
   reellement une installation d'openZPL. }
 procedure CurStepChanged(CurStep: TSetupStep);

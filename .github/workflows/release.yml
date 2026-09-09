@@ -41,7 +41,6 @@ jobs:
       - name: Compiler et publier l'application
         run: >
           dotnet publish src/openZPL.csproj -c Release -r win-x64 --self-contained true
-          -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
           -p:Version=${{ github.ref_name }}
           -o src/bin/Release/net10.0-windows/win-x64/publish
 
@@ -51,11 +50,14 @@ jobs:
       - name: Compiler l'installateur
         run: iscc "/DMyAppVersion=${{ github.ref_name }}" Setup\openZPL.iss
 
-      - name: Preparer l'executable portable
-        shell: bash
-        run: |
-          cp src/bin/Release/net10.0-windows/win-x64/publish/openZPL.exe \
-             "openZPL-${{ github.ref_name }}-portable.exe"
+      # La publication n'etant plus en fichier unique, la version portable est
+      # l'archive du dossier publie (executable + dependances) et non un .exe seul.
+      - name: Preparer l'archive portable
+        shell: pwsh
+        run: >
+          Compress-Archive
+          -Path src/bin/Release/net10.0-windows/win-x64/publish/*
+          -DestinationPath "openZPL-${{ github.ref_name }}-portable.zip"
 
       - name: Publier la release GitHub
         shell: bash
@@ -64,6 +66,6 @@ jobs:
         run: |
           gh release create "${{ github.ref_name }}" \
             "Setup/Output/openZPL-Setup-${{ github.ref_name }}.exe" \
-            "openZPL-${{ github.ref_name }}-portable.exe" \
+            "openZPL-${{ github.ref_name }}-portable.zip" \
             --title "openZPL ${{ github.ref_name }}" \
             --generate-notes
