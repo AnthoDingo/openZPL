@@ -40,8 +40,6 @@ public partial class App : Application
         AppSettingsData settings = new AppSettingsStore().Load();
         Language.Apply(settings.Language ?? Language.Detect());
 
-        FileAssociation.EnsureRegistered();
-
         if (e.Args.Length > 0)
             StartupFilePath = e.Args[0];
     }

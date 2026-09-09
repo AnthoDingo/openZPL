@@ -203,3 +203,15 @@ public sealed class Base64ToImageConverter : IValueConverter
     public object ConvertBack(object value, Type targetType, object? parameter, CultureInfo culture) =>
         throw new NotSupportedException();
 }
+
+/// <summary>Index d'un calque -> Panel.ZIndex. La liste des calques se lit de haut
+/// en bas (le premier est au premier plan) alors que le Canvas empile ses enfants
+/// dans l'ordre inverse : on nie l'index pour que les deux concordent.</summary>
+public sealed class IndexToZIndexConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        value is int index ? -index : 0;
+
+    public object ConvertBack(object value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}

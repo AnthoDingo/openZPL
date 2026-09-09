@@ -3,6 +3,9 @@ obj/
 data/
 *.user
 
+# Sortie compilee du script Inno Setup (voir Setup/openZPL.iss)
+Setup/Output/
+
 # Chemin par défaut suggéré (mais jamais utilisé) par l'étape SQLite du wizard /setup — voir le
 # commentaire dans XChangeSetupInitializer.cs. Un fichier ici est un artefact de test local orphelin.
 App_Data/

@@ -14,10 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 using openZPL.Models;
 using openZPL.ViewModels;
 
@@ -51,6 +53,73 @@ public partial class LabelEditorView : UserControl
     {
         if (((ListBox)sender).SelectedItem is LabelElement element)
             _viewModel.SelectElementCommand.Execute(element);
+    }
+
+    // ── Reordonnancement des calques (glisser/deposer) ──────────────────────────
+
+    private Point _layerDragStart;
+
+    private void LayersList_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        _layerDragStart = e.GetPosition(null);
+    }
+
+    private void LayersList_PreviewMouseMove(object sender, MouseEventArgs e)
+    {
+        if (e.LeftButton != MouseButtonState.Pressed) return;
+
+        Point position = e.GetPosition(null);
+        if (Math.Abs(position.X - _layerDragStart.X) < SystemParameters.MinimumHorizontalDragDistance &&
+            Math.Abs(position.Y - _layerDragStart.Y) < SystemParameters.MinimumVerticalDragDistance)
+            return;
+
+        if (FindAncestor<ListBoxItem>((DependencyObject)e.OriginalSource) is not { } item) return;
+        if (item.DataContext is not LabelElement element) return;
+
+        element.IsDragging = true;
+        try
+        {
+            DragDrop.DoDragDrop(item, element, DragDropEffects.Move);
+        }
+        finally
+        {
+            element.IsDragging = false;
+        }
+    }
+
+    private void LayersList_DragOver(object sender, DragEventArgs e)
+    {
+        e.Effects = e.Data.GetDataPresent(typeof(LabelElement)) ? DragDropEffects.Move : DragDropEffects.None;
+        e.Handled = true;
+    }
+
+    /// <summary>Deplace le calque drague a la position de celui survole au
+    /// relachement — en fin de liste si le depot tombe hors des elements.</summary>
+    private void LayersList_Drop(object sender, DragEventArgs e)
+    {
+        if (e.Data.GetData(typeof(LabelElement)) is not LabelElement dragged) return;
+
+        ObservableCollection<LabelElement> elements = _viewModel.CurrentTemplate.Elements;
+        int oldIndex = elements.IndexOf(dragged);
+        if (oldIndex < 0) return;
+
+        int newIndex = FindAncestor<ListBoxItem>((DependencyObject)e.OriginalSource) is { } item
+            && item.DataContext is LabelElement target
+            ? elements.IndexOf(target)
+            : elements.Count - 1;
+
+        if (newIndex >= 0 && newIndex != oldIndex)
+            elements.Move(oldIndex, newIndex);
+    }
+
+    private static T? FindAncestor<T>(DependencyObject? current) where T : DependencyObject
+    {
+        while (current is not null)
+        {
+            if (current is T match) return match;
+            current = VisualTreeHelper.GetParent(current);
+        }
+        return null;
     }
 
     // ── Zoom ──────────────────────────────────────────────────────────────────

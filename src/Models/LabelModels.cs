@@ -19,10 +19,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace openZPL.Models;
 
-public enum LabelElementType { Text, Barcode, Image }
+public enum LabelElementType { Text, Barcode, Image, Separator }
 public enum LabelBarcodeType { Code128, QRCode, DataMatrix }
 public enum LabelHAlign { Left, Center, Right }
 public enum LabelVAlign { Top, Middle, Bottom }
+public enum LabelOrientation { Horizontal, Vertical }
 
 /// <summary>
 /// Element positionnable sur une etiquette. Les proprietes inutilisees selon
@@ -57,10 +58,23 @@ public partial class LabelElement : ObservableObject
     // Image — PNG/JPG encode en base64 (data:image/png;base64,...)
     [ObservableProperty] private string? _imageData;
 
+    // Séparateur — trait fin trace au centre de la boite englobante
+    [ObservableProperty] private LabelOrientation _orientation = LabelOrientation.Horizontal;
+    [ObservableProperty] private int _thickness = 4;
+
     /// <summary>Etat UI uniquement (surbrillance dans le canvas) — non persiste.</summary>
     [ObservableProperty]
     [property: System.Text.Json.Serialization.JsonIgnore]
     private bool _isSelected;
+
+    /// <summary>Etat UI uniquement (glisser/deposer dans la liste des calques) — non persiste.</summary>
+    [ObservableProperty]
+    [property: System.Text.Json.Serialization.JsonIgnore]
+    private bool _isDragging;
+
+    /// <summary>Changer l'orientation permute largeur/hauteur pour reorienter
+    /// le trait sur place plutot que de laisser une boite incoherente.</summary>
+    partial void OnOrientationChanged(LabelOrientation value) => (Width, Height) = (Height, Width);
 }
 
 /// <summary>

@@ -118,6 +118,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                            Icon="{ui:SymbolIcon Image20}" Content="{loc:Loc ElementImage}"
                            Command="{Binding AddElementCommand}"
                            CommandParameter="{x:Static models:LabelElementType.Image}" />
+                <ui:Button Style="{StaticResource PaletteButtonStyle}"
+                           Icon="{ui:SymbolIcon LineHorizontal120}" Content="{loc:Loc ElementSeparator}"
+                           Command="{Binding AddElementCommand}"
+                           CommandParameter="{x:Static models:LabelElementType.Separator}" />
 
                 <Separator Margin="0,12" />
 
@@ -126,11 +130,42 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                          ItemsSource="{Binding CurrentTemplate.Elements}"
                          SelectedItem="{Binding SelectedElement, Mode=OneWay}"
                          SelectionChanged="LayersList_SelectionChanged"
+                         AllowDrop="True"
+                         PreviewMouseLeftButtonDown="LayersList_PreviewMouseLeftButtonDown"
+                         PreviewMouseMove="LayersList_PreviewMouseMove"
+                         DragOver="LayersList_DragOver"
+                         Drop="LayersList_Drop"
                          MaxHeight="220">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                            <Setter Property="VerticalContentAlignment" Value="Center" />
+                        </Style>
+                    </ListBox.ItemContainerStyle>
                     <ListBox.ItemTemplate>
                         <DataTemplate DataType="{x:Type models:LabelElement}">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock FontSize="12">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <!-- Poignee affichee pendant le glisser-deposer du calque -->
+                                <ui:SymbolIcon Grid.Column="0" Symbol="RowTriple20" FontSize="14" Opacity="0.6"
+                                               Margin="0,0,6,0" VerticalAlignment="Center">
+                                    <ui:SymbolIcon.Style>
+                                        <Style TargetType="ui:SymbolIcon">
+                                            <!-- Hidden (et non Collapsed) : la colonne garde sa largeur, le texte ne se decale pas -->
+                                            <Setter Property="Visibility" Value="Hidden" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsDragging}" Value="True">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ui:SymbolIcon.Style>
+                                </ui:SymbolIcon>
+                                <TextBlock Grid.Column="1" FontSize="12" VerticalAlignment="Center"
+                                           TextTrimming="CharacterEllipsis">
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Text" Value="{Binding Text}" />
@@ -141,11 +176,31 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                                                 <DataTrigger Binding="{Binding Type}" Value="Image">
                                                     <Setter Property="Text" Value="{loc:Loc LayerImage}" />
                                                 </DataTrigger>
+                                                <DataTrigger Binding="{Binding Type}" Value="Separator">
+                                                    <Setter Property="Text" Value="{loc:Loc LayerSeparator}" />
+                                                </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
                                     </TextBlock.Style>
                                 </TextBlock>
-                            </StackPanel>
+                                <ui:Button Grid.Column="2" Icon="{ui:SymbolIcon Delete20}" Padding="5" Appearance="Danger"
+                                           ToolTip="{loc:Loc TipDelete}" Margin="6,0,0,0"
+                                           VerticalAlignment="Center"
+                                           Command="{Binding ElementName=LayersList, Path=DataContext.RemoveElementCommand}"
+                                           CommandParameter="{Binding}">
+                                    <ui:Button.Style>
+                                        <Style TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
+                                            <!-- Hidden (et non Collapsed) : la place reste reservee, la hauteur de ligne ne bouge pas au survol -->
+                                            <Setter Property="Visibility" Value="Hidden" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=IsMouseOver}" Value="True">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ui:Button.Style>
+                                </ui:Button>
+                            </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
@@ -215,7 +270,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                                 <DropShadowEffect BlurRadius="24" ShadowDepth="4" Opacity="0.3" />
                             </Border.Effect>
 
-                            <ItemsControl ItemsSource="{Binding CurrentTemplate.Elements}">
+                            <!-- AlternationCount donne son rang a chaque element : le ZIndex qui en
+                                 decoule met le haut de la liste des calques au premier plan -->
+                            <ItemsControl ItemsSource="{Binding CurrentTemplate.Elements}" AlternationCount="9999">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <Canvas Background="Transparent" />
@@ -225,6 +282,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                                     <Style TargetType="ContentPresenter">
                                         <Setter Property="Canvas.Left" Value="{Binding X}" />
                                         <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                                        <Setter Property="Panel.ZIndex"
+                                                Value="{Binding RelativeSource={RelativeSource Self}, Path=(ItemsControl.AlternationIndex), Converter={StaticResource IndexToZIndex}}" />
                                     </Style>
                                 </ItemsControl.ItemContainerStyle>
                                 <ItemsControl.ItemTemplate>
@@ -318,6 +377,16 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                                                     <Image Source="{Binding ImageData, Converter={StaticResource Base64ToImage}}" Stretch="Uniform"
                                                            Visibility="{Binding ImageData, Converter={StaticResource NullToVisibility}}" />
                                                 </Grid>
+
+                                                <!-- Separateur -->
+                                                <Grid Visibility="{Binding Type, Converter={StaticResource EnumMatchToVisibility}, ConverterParameter=Separator}">
+                                                    <Rectangle Fill="Black" HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                                                               Height="{Binding Thickness}"
+                                                               Visibility="{Binding Orientation, Converter={StaticResource EnumMatchToVisibility}, ConverterParameter=Horizontal}" />
+                                                    <Rectangle Fill="Black" HorizontalAlignment="Center" VerticalAlignment="Stretch"
+                                                               Width="{Binding Thickness}"
+                                                               Visibility="{Binding Orientation, Converter={StaticResource EnumMatchToVisibility}, ConverterParameter=Vertical}" />
+                                                </Grid>
                                             </Grid>
 
                                             <!-- Deplacement -->
@@ -373,17 +442,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                       DataContext="{Binding SelectedElement}">
             <StackPanel Visibility="{Binding Converter={StaticResource NullToVisibility}}">
 
-                <Grid Margin="0,0,0,10">
-                    <TextBlock Text="{loc:Loc PropertiesTitle}" FontWeight="SemiBold" FontSize="14" VerticalAlignment="Center" />
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <ui:Button Icon="{ui:SymbolIcon ArrowUp20}" Padding="5" Margin="0,0,4,0" ToolTip="{loc:Loc TipMoveUp}"
-                                   Command="{Binding DataContext.MoveUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
-                        <ui:Button Icon="{ui:SymbolIcon ArrowDown20}" Padding="5" Margin="0,0,4,0" ToolTip="{loc:Loc TipMoveDown}"
-                                   Command="{Binding DataContext.MoveDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
-                        <ui:Button Icon="{ui:SymbolIcon Delete20}" Padding="5" Appearance="Danger" ToolTip="{loc:Loc TipDelete}"
-                                   Command="{Binding DataContext.DeleteSelectedCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
-                    </StackPanel>
-                </Grid>
+                <TextBlock Text="{loc:Loc PropertiesTitle}" FontWeight="SemiBold" FontSize="14"
+                           VerticalAlignment="Center" Margin="0,0,0,10" />
 
                 <TextBlock Text="{loc:Loc SectionPositionSize}" FontSize="10" FontWeight="SemiBold" Opacity="0.6" Margin="0,0,0,6" />
                 <Grid Margin="0,0,0,12">
@@ -507,6 +567,25 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                             Visibility="{Binding ImageData, Converter={StaticResource NullToVisibility}}">
                         <Image Source="{Binding ImageData, Converter={StaticResource Base64ToImage}}" Stretch="Uniform" MaxHeight="140" />
                     </Border>
+                </StackPanel>
+
+                <!-- Separateur -->
+                <StackPanel Visibility="{Binding Type, Converter={StaticResource EnumMatchToVisibility}, ConverterParameter=Separator}">
+                    <TextBlock Text="{loc:Loc SectionOrientation}" FontSize="10" FontWeight="SemiBold" Opacity="0.6" Margin="0,0,0,6" />
+                    <WrapPanel Margin="0,0,0,10">
+                        <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="Orientation" ToolTip="{loc:Loc TipOrientationHorizontal}"
+                                     IsChecked="{Binding Orientation, Converter={StaticResource EnumToBoolean}, ConverterParameter=Horizontal}">
+                            <ui:SymbolIcon Symbol="LineHorizontal120" FontSize="16" />
+                        </RadioButton>
+                        <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="Orientation" ToolTip="{loc:Loc TipOrientationVertical}" Margin="0"
+                                     IsChecked="{Binding Orientation, Converter={StaticResource EnumToBoolean}, ConverterParameter=Vertical}">
+                            <ui:SymbolIcon Symbol="DividerTall20" FontSize="16" />
+                        </RadioButton>
+                    </WrapPanel>
+
+                    <TextBlock Text="{loc:Loc LabelThickness}" FontSize="11" Opacity="0.6" />
+                    <ui:NumberBox Value="{Binding Thickness}" MinWidth="90" HorizontalAlignment="Left"
+                                  Minimum="1" Maximum="200" SpinButtonPlacementMode="Hidden" Margin="0,0,0,8" />
                 </StackPanel>
 
             </StackPanel>

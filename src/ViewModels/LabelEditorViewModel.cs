@@ -282,11 +282,13 @@ public partial class LabelEditorViewModel : ObservableObject
             LabelElementType.Text => new LabelElement { Type = type, Text = Strings.DefaultTextContent, Width = 300, Height = 40 },
             LabelElementType.Barcode => new LabelElement { Type = type, BarcodeValue = "123456789", Width = 300, Height = 80 },
             LabelElementType.Image => new LabelElement { Type = type, Width = 100, Height = 100 },
+            LabelElementType.Separator => new LabelElement { Type = type, Width = 300, Height = 20, Thickness = 4 },
             _ => new LabelElement { Type = type }
         };
         el.X = 20;
         el.Y = CurrentTemplate.Elements.Count * 50 + 20;
-        CurrentTemplate.Elements.Add(el);
+        // index 0 = premier plan : le nouvel element arrive en haut de la liste des calques
+        CurrentTemplate.Elements.Insert(0, el);
         SelectElement(el);
     }
 
@@ -315,19 +317,12 @@ public partial class LabelEditorViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void MoveUp()
+    private void RemoveElement(LabelElement element)
     {
-        if (SelectedElement is null) return;
-        int i = CurrentTemplate.Elements.IndexOf(SelectedElement);
-        if (i > 0) CurrentTemplate.Elements.Move(i, i - 1);
-    }
-
-    [RelayCommand]
-    private void MoveDown()
-    {
-        if (SelectedElement is null) return;
-        int i = CurrentTemplate.Elements.IndexOf(SelectedElement);
-        if (i < CurrentTemplate.Elements.Count - 1) CurrentTemplate.Elements.Move(i, i + 1);
+        if (element is null) return;
+        CurrentTemplate.Elements.Remove(element);
+        if (ReferenceEquals(SelectedElement, element))
+            SelectedElement = null;
     }
 
     [RelayCommand]

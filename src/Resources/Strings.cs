@@ -82,11 +82,17 @@ public static class Strings
     /// <summary>Image</summary>
     public static string ElementImage => Get("ElementImage");
 
+    /// <summary>Separateur</summary>
+    public static string ElementSeparator => Get("ElementSeparator");
+
     /// <summary>CALQUES</summary>
     public static string SectionLayers => Get("SectionLayers");
 
     /// <summary>image</summary>
     public static string LayerImage => Get("LayerImage");
+
+    /// <summary>separateur</summary>
+    public static string LayerSeparator => Get("LayerSeparator");
 
     /// <summary>Largeur</summary>
     public static string LabelWidth => Get("LabelWidth");
@@ -165,6 +171,18 @@ public static class Strings
 
     /// <summary>Choisir une image...</summary>
     public static string ButtonChooseImage => Get("ButtonChooseImage");
+
+    /// <summary>ORIENTATION</summary>
+    public static string SectionOrientation => Get("SectionOrientation");
+
+    /// <summary>Horizontal</summary>
+    public static string TipOrientationHorizontal => Get("TipOrientationHorizontal");
+
+    /// <summary>Vertical</summary>
+    public static string TipOrientationVertical => Get("TipOrientationVertical");
+
+    /// <summary>Epaisseur</summary>
+    public static string LabelThickness => Get("LabelThickness");
 
     /// <summary>Imprimer</summary>
     public static string PrintTitle => Get("PrintTitle");
@@ -249,9 +267,6 @@ public static class Strings
 
     /// <summary>Tous les fichiers (*.*)|*.*</summary>
     public static string FilterAllFiles => Get("FilterAllFiles");
-
-    /// <summary>Etiquette openZPL</summary>
-    public static string FileTypeLabel => Get("FileTypeLabel");
 
     /// <summary>Ouverture impossible</summary>
     public static string ErrorOpenTitle => Get("ErrorOpenTitle");

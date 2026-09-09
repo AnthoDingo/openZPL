@@ -106,11 +106,17 @@
   <data name="ElementImage" xml:space="preserve">
     <value>Image</value>
   </data>
+  <data name="ElementSeparator" xml:space="preserve">
+    <value>Separateur</value>
+  </data>
   <data name="SectionLayers" xml:space="preserve">
     <value>CALQUES</value>
   </data>
   <data name="LayerImage" xml:space="preserve">
     <value>image</value>
+  </data>
+  <data name="LayerSeparator" xml:space="preserve">
+    <value>separateur</value>
   </data>
   <data name="LabelWidth" xml:space="preserve">
     <value>Largeur</value>
@@ -189,6 +195,18 @@
   </data>
   <data name="ButtonChooseImage" xml:space="preserve">
     <value>Choisir une image...</value>
+  </data>
+  <data name="SectionOrientation" xml:space="preserve">
+    <value>ORIENTATION</value>
+  </data>
+  <data name="TipOrientationHorizontal" xml:space="preserve">
+    <value>Horizontal</value>
+  </data>
+  <data name="TipOrientationVertical" xml:space="preserve">
+    <value>Vertical</value>
+  </data>
+  <data name="LabelThickness" xml:space="preserve">
+    <value>Epaisseur</value>
   </data>
   <data name="PrintTitle" xml:space="preserve">
     <value>Imprimer</value>
@@ -273,9 +291,6 @@
   </data>
   <data name="FilterAllFiles" xml:space="preserve">
     <value>Tous les fichiers (*.*)|*.*</value>
-  </data>
-  <data name="FileTypeLabel" xml:space="preserve">
-    <value>Etiquette openZPL</value>
   </data>
   <data name="ErrorOpenTitle" xml:space="preserve">
     <value>Ouverture impossible</value>

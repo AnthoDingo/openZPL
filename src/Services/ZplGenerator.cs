@@ -36,7 +36,9 @@ public static class ZplGenerator
         sb.AppendLine("^LH0,0");                      // home
         sb.AppendLine("^CI28");                       // encodage UTF-8
 
-        foreach (LabelElement el in template.Elements)
+        // La liste des calques va du premier plan (index 0) vers l'arriere-plan ;
+        // le ZPL dessine dans l'ordre d'ecriture, on part donc du fond.
+        foreach (LabelElement el in template.Elements.Reverse())
             sb.Append(RenderElement(el));
 
         if (copies > 1)
@@ -51,6 +53,7 @@ public static class ZplGenerator
         LabelElementType.Text => RenderText(el),
         LabelElementType.Barcode => RenderBarcode(el),
         LabelElementType.Image => RenderImage(el),
+        LabelElementType.Separator => RenderSeparator(el),
         _ => string.Empty
     };
 
@@ -177,6 +180,22 @@ public static class ZplGenerator
         {
             return string.Empty;
         }
+    }
+
+    // ── Séparateur -> ^GB (boite pleine, epaisseur = plus petite dimension) ────
+
+    private static string RenderSeparator(LabelElement el)
+    {
+        int t = Math.Max(1, el.Thickness);
+
+        if (el.Orientation == LabelOrientation.Vertical)
+        {
+            int x = el.X + Math.Max(0, (el.Width - t) / 2);
+            return $"^FO{x},{el.Y}^GB{t},{el.Height},{t},B,0^FS\n";
+        }
+
+        int y = el.Y + Math.Max(0, (el.Height - t) / 2);
+        return $"^FO{el.X},{y}^GB{el.Width},{t},{t},B,0^FS\n";
     }
 
     // ── Utilitaires ───────────────────────────────────────────────────────────

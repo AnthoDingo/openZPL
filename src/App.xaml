@@ -39,6 +39,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
             <conv:VAlignToAlignmentConverter x:Key="VAlignToAlignment" />
             <conv:BarcodeImageConverter x:Key="BarcodeImage" />
             <conv:Base64ToImageConverter x:Key="Base64ToImage" />
+            <conv:IndexToZIndexConverter x:Key="IndexToZIndex" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>
