@@ -29,6 +29,8 @@ namespace openZPL.ViewModels;
 public partial class LabelEditorViewModel : ObservableObject
 {
     private readonly PrinterSettingsStore _printerStore = new();
+    private readonly AppSettingsStore _appSettingsStore = new();
+    private readonly AppSettingsData _appSettings;
 
     public ObservableCollection<PrinterProfile> Printers { get; } = [];
 
@@ -49,11 +51,15 @@ public partial class LabelEditorViewModel : ObservableObject
     public int ZoomPercent => (int)Math.Round(Scale * 100);
     /// <summary>Le fichier ouvert identifie l'etiquette ; tant qu'elle n'est pas
     /// enregistree, on affiche son nom.</summary>
-    public string WindowTitle => CurrentFilePath is null
+    public string WindowTitle => string.IsNullOrEmpty(CurrentFilePath)
         ? $"{CurrentTemplate.Name} - openZPL"
         : $"{Path.GetFileName(CurrentFilePath)} - openZPL";
 
-    public LabelEditorViewModel() => LoadPrinters();
+    public LabelEditorViewModel()
+    {
+        _appSettings = _appSettingsStore.Load();
+        LoadPrinters();
+    }
 
     /// <summary>Recharge la liste des imprimantes configurees depuis le disque —
     /// appele aussi apres fermeture de la fenetre Settings pour refleter les changements.</summary>
@@ -103,7 +109,7 @@ public partial class LabelEditorViewModel : ObservableObject
     {
         if (string.IsNullOrWhiteSpace(CurrentTemplate.Name)) return;
 
-        if (CurrentFilePath is null)
+        if (string.IsNullOrEmpty(CurrentFilePath))
         {
             await SaveAsAsync();
             return;
@@ -123,7 +129,12 @@ public partial class LabelEditorViewModel : ObservableObject
             Filter = LabelFile.SaveFilter,
             DefaultExt = LabelFile.Extension,
             AddExtension = true,
-            FileName = LabelFile.SuggestFileName(CurrentTemplate.Name),
+            // une etiquette deja enregistree se repropose a sa place, sinon on
+            // repart du dernier dossier utilise
+            FileName = string.IsNullOrEmpty(CurrentFilePath)
+                ? LabelFile.SuggestFileName(CurrentTemplate.Name)
+                : CurrentFilePath,
+            InitialDirectory = LastDirectory(),
         };
         if (dialog.ShowDialog() != true) return;
 
@@ -138,6 +149,7 @@ public partial class LabelEditorViewModel : ObservableObject
             Title = "Ouvrir une etiquette",
             Filter = LabelFile.OpenFilter,
             DefaultExt = LabelFile.Extension,
+            InitialDirectory = LastDirectory(),
         };
         if (dialog.ShowDialog() != true) return;
 
@@ -166,6 +178,30 @@ public partial class LabelEditorViewModel : ObservableObject
 
         CurrentTemplate = template;
         CurrentFilePath = dialog.FileName;
+        RememberDirectory(dialog.FileName);
+    }
+
+    /// <summary>Dossier ou rouvrir les boites de dialogue : celui du fichier
+    /// courant, sinon le dernier utilise. Vide si le dossier memorise a disparu
+    /// (cle USB retiree, dossier reseau hors ligne) — Windows choisit alors.</summary>
+    private string LastDirectory()
+    {
+        string? dir = string.IsNullOrEmpty(CurrentFilePath)
+            ? _appSettings.LastDirectory
+            : Path.GetDirectoryName(CurrentFilePath);
+
+        return dir is not null && Directory.Exists(dir) ? dir : string.Empty;
+    }
+
+    /// <summary>Memorise le dossier du fichier ouvert ou enregistre, pour la
+    /// prochaine boite de dialogue et pour les prochains lancements.</summary>
+    private void RememberDirectory(string path)
+    {
+        string? dir = Path.GetDirectoryName(path);
+        if (dir is null || dir == _appSettings.LastDirectory) return;
+
+        _appSettings.LastDirectory = dir;
+        _appSettingsStore.Save(_appSettings);
     }
 
     private async Task WriteFileAsync(string path)
@@ -186,6 +222,7 @@ public partial class LabelEditorViewModel : ObservableObject
         }
 
         CurrentFilePath = path;
+        RememberDirectory(path);
     }
 
     private static async Task ShowErrorAsync(string title, string message)
