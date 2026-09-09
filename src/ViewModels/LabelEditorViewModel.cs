@@ -19,7 +19,9 @@ using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
+using openZPL.Localization;
 using openZPL.Models;
+using openZPL.Resources;
 using openZPL.Services;
 using openZPL.Views;
 using Wpf.Ui.Controls;
@@ -58,7 +60,34 @@ public partial class LabelEditorViewModel : ObservableObject
     public LabelEditorViewModel()
     {
         _appSettings = _appSettingsStore.Load();
+        CurrentTemplate.Name = Strings.LabelDefaultName;
         LoadPrinters();
+    }
+
+    // ── Langue ────────────────────────────────────────────────────────────────
+
+    public bool IsFrench => Localization.Language.Current == Localization.Language.French;
+    public bool IsEnglish => Localization.Language.Current == Localization.Language.English;
+
+    /// <summary>Change la langue de l'interface et retient le choix. Les textes
+    /// deja affiches se retraduisent, sans redemarrage.</summary>
+    [RelayCommand]
+    private void SetLanguage(string code)
+    {
+        if (Localization.Language.Current == code) return;
+
+        Localization.Language.Apply(code);
+
+        _appSettings.Language = code;
+        _appSettingsStore.Save(_appSettings);
+
+        // le nom par defaut suit la langue tant que l'etiquette n'a pas de fichier
+        if (CurrentFilePath is null && CurrentTemplate.Elements.Count == 0)
+            CurrentTemplate.Name = Strings.LabelDefaultName;
+
+        OnPropertyChanged(nameof(IsFrench));
+        OnPropertyChanged(nameof(IsEnglish));
+        OnPropertyChanged(nameof(WindowTitle));
     }
 
     /// <summary>Recharge la liste des imprimantes configurees depuis le disque —
@@ -99,7 +128,7 @@ public partial class LabelEditorViewModel : ObservableObject
     private void New()
     {
         CurrentFilePath = null;
-        CurrentTemplate = new LabelTemplate();
+        CurrentTemplate = new LabelTemplate { Name = Strings.LabelDefaultName };
     }
 
     /// <summary>Enregistre dans le fichier .ozpl ouvert, ou demande ou le creer
@@ -125,7 +154,7 @@ public partial class LabelEditorViewModel : ObservableObject
 
         var dialog = new SaveFileDialog
         {
-            Title = "Enregistrer l'etiquette",
+            Title = Strings.DialogSaveLabel,
             Filter = LabelFile.SaveFilter,
             DefaultExt = LabelFile.Extension,
             AddExtension = true,
@@ -146,7 +175,7 @@ public partial class LabelEditorViewModel : ObservableObject
     {
         var dialog = new OpenFileDialog
         {
-            Title = "Ouvrir une etiquette",
+            Title = Strings.DialogOpenLabel,
             Filter = LabelFile.OpenFilter,
             DefaultExt = LabelFile.Extension,
             InitialDirectory = LastDirectory(),
@@ -167,19 +196,19 @@ public partial class LabelEditorViewModel : ObservableObject
         }
         catch (IOException ex)
         {
-            await ShowErrorAsync("Ouverture impossible", ex.Message);
+            await ShowErrorAsync(Strings.ErrorOpenTitle, ex.Message);
             return;
         }
         catch (UnauthorizedAccessException ex)
         {
-            await ShowErrorAsync("Ouverture impossible", ex.Message);
+            await ShowErrorAsync(Strings.ErrorOpenTitle, ex.Message);
             return;
         }
 
         if (template is null)
         {
-            await ShowErrorAsync("Ouverture impossible",
-                $"« {Path.GetFileName(path)} » n'est pas un fichier openZPL exploitable.");
+            await ShowErrorAsync(Strings.ErrorOpenTitle,
+                string.Format(Strings.ErrorNotOpenZpl, Path.GetFileName(path)));
             return;
         }
 
@@ -219,12 +248,12 @@ public partial class LabelEditorViewModel : ObservableObject
         }
         catch (IOException ex)
         {
-            await ShowErrorAsync("Enregistrement impossible", ex.Message);
+            await ShowErrorAsync(Strings.ErrorSaveTitle, ex.Message);
             return;
         }
         catch (UnauthorizedAccessException ex)
         {
-            await ShowErrorAsync("Enregistrement impossible", ex.Message);
+            await ShowErrorAsync(Strings.ErrorSaveTitle, ex.Message);
             return;
         }
 
@@ -238,7 +267,7 @@ public partial class LabelEditorViewModel : ObservableObject
         {
             Title = title,
             Content = message,
-            CloseButtonText = "Fermer",
+            CloseButtonText = Strings.ButtonClose,
         };
         await box.ShowDialogAsync();
     }
@@ -250,7 +279,7 @@ public partial class LabelEditorViewModel : ObservableObject
     {
         LabelElement el = type switch
         {
-            LabelElementType.Text => new LabelElement { Type = type, Text = "Texte", Width = 300, Height = 40 },
+            LabelElementType.Text => new LabelElement { Type = type, Text = Strings.DefaultTextContent, Width = 300, Height = 40 },
             LabelElementType.Barcode => new LabelElement { Type = type, BarcodeValue = "123456789", Width = 300, Height = 80 },
             LabelElementType.Image => new LabelElement { Type = type, Width = 100, Height = 100 },
             _ => new LabelElement { Type = type }
@@ -308,8 +337,8 @@ public partial class LabelEditorViewModel : ObservableObject
 
         var dialog = new OpenFileDialog
         {
-            Title = "Choisir une image",
-            Filter = "Images (*.png;*.jpg;*.jpeg)|*.png;*.jpg;*.jpeg",
+            Title = Strings.DialogChooseImage,
+            Filter = Strings.FilterImages,
         };
         if (dialog.ShowDialog() != true) return;
 
@@ -355,6 +384,6 @@ public partial class LabelEditorViewModel : ObservableObject
         (bool ok, string? error) = await ZebraPrinterService.PrintZplAsync(SelectedPrinter, zpl);
 
         if (!ok)
-            await ShowErrorAsync("Impression impossible", error ?? "Erreur inconnue.");
+            await ShowErrorAsync(Strings.ErrorPrintTitle, error ?? Strings.ErrorUnknown);
     }
 }

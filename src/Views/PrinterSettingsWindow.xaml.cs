@@ -16,6 +16,7 @@
 
 using System.Windows;
 using System.Windows.Controls;
+using openZPL.Resources;
 using openZPL.Services;
 using Wpf.Ui.Controls;
 
@@ -55,7 +56,7 @@ public partial class PrinterSettingsWindow : FluentWindow
 
     private void Add_Click(object sender, RoutedEventArgs e)
     {
-        var profile = new PrinterProfile { Name = "Nouvelle imprimante" };
+        var profile = new PrinterProfile { Name = Strings.NewPrinterName };
         _data.Printers.Add(profile);
         if (_data.Printers.Count == 1) _data.DefaultPrinterId = profile.Id;
         SaveAndRefresh(profile);

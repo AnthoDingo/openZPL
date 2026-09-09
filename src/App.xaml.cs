@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 using System.Windows;
+using openZPL.Localization;
 using openZPL.Services;
 using Wpf.Ui.Appearance;
 
@@ -34,6 +35,11 @@ public partial class App : Application
         base.OnStartup(e);
 
         ApplicationThemeManager.Apply(ApplicationTheme.Dark);
+
+        // avant toute fenetre, sinon la premiere naitrait dans la mauvaise langue
+        AppSettingsData settings = new AppSettingsStore().Load();
+        Language.Apply(settings.Language ?? Language.Detect());
+
         FileAssociation.EnsureRegistered();
 
         if (e.Args.Length > 0)

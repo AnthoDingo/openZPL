@@ -17,6 +17,7 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
+using openZPL.Resources;
 
 namespace openZPL.Services;
 
@@ -28,7 +29,6 @@ public static class FileAssociation
 {
     /// <summary>Identifiant du type de fichier dans la base de registre.</summary>
     private const string ProgId = "openZPL.Label";
-    private const string FileTypeLabel = "Etiquette openZPL";
 
     /// <summary>Enregistre l'association si elle manque ou si le chemin de
     /// l'executable a change (application deplacee, mise a jour). Ne fait rien
@@ -50,7 +50,7 @@ public static class FileAssociation
                 ext.SetValue(null, ProgId);
 
             using (RegistryKey type = Registry.CurrentUser.CreateSubKey($@"Software\Classes\{ProgId}"))
-                type.SetValue(null, FileTypeLabel);
+                type.SetValue(null, Strings.FileTypeLabel);
 
             using (RegistryKey ico = Registry.CurrentUser.CreateSubKey($@"Software\Classes\{ProgId}\DefaultIcon"))
                 ico.SetValue(null, icon);

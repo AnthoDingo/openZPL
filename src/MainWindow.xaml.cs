@@ -46,7 +46,7 @@ public partial class MainWindow : FluentWindow
         Application.Current.Shutdown();
     }
 
-    private void Settings_Click(object sender, RoutedEventArgs e)
+    private void Printers_Click(object sender, RoutedEventArgs e)
     {
         var dialog = new PrinterSettingsWindow { Owner = this };
         dialog.ShowDialog();

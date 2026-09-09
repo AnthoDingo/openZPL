@@ -25,6 +25,10 @@ public class AppSettingsData
     /// <summary>Dernier dossier utilise pour ouvrir ou enregistrer une etiquette,
     /// pour rouvrir les boites de dialogue au meme endroit.</summary>
     public string? LastDirectory { get; set; }
+
+    /// <summary>Langue de l'interface ("fr", "en"). null au premier lancement :
+    /// celle de Windows est alors utilisee.</summary>
+    public string? Language { get; set; }
 }
 
 /// <summary>Persiste les preferences d'interface en JSON dans %AppData%\openZPL

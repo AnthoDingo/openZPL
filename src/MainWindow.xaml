@@ -22,6 +22,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:loc="clr-namespace:openZPL.Localization"
         xmlns:local="clr-namespace:openZPL"
         xmlns:views="clr-namespace:openZPL.Views"
         mc:Ignorable="d"
@@ -61,29 +62,42 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
             </Grid.ColumnDefinitions>
 
             <Menu Grid.Column="0" VerticalAlignment="Center">
-                <MenuItem Header="File" Icon="{ui:SymbolIcon Document20}">
-                    <MenuItem Header="Nouvelle etiquette" Icon="{ui:SymbolIcon DocumentAdd20}"
+                <MenuItem Header="{loc:Loc MenuFile}" Icon="{ui:SymbolIcon Document20}">
+                    <MenuItem Header="{loc:Loc MenuNewLabel}" Icon="{ui:SymbolIcon DocumentAdd20}"
                               InputGestureText="Ctrl+N"
                               Command="{Binding ViewModel.NewCommand, ElementName=Editor}" />
-                    <MenuItem Header="Ouvrir..." Icon="{ui:SymbolIcon FolderOpen20}"
+                    <MenuItem Header="{loc:Loc MenuOpen}" Icon="{ui:SymbolIcon FolderOpen20}"
                               InputGestureText="Ctrl+O"
                               Command="{Binding ViewModel.OpenFileCommand, ElementName=Editor}" />
                     <Separator />
-                    <MenuItem Header="Enregistrer" Icon="{ui:SymbolIcon Save20}"
+                    <MenuItem Header="{loc:Loc MenuSave}" Icon="{ui:SymbolIcon Save20}"
                               InputGestureText="Ctrl+S"
                               Command="{Binding ViewModel.SaveCommand, ElementName=Editor}" />
-                    <MenuItem Header="Enregistrer sous..." Icon="{ui:SymbolIcon SaveEdit20}"
-                              InputGestureText="Ctrl+Maj+S"
+                    <MenuItem Header="{loc:Loc MenuSaveAs}" Icon="{ui:SymbolIcon SaveEdit20}"
+                              InputGestureText="{loc:Loc ShortcutSaveAs}"
                               Command="{Binding ViewModel.SaveAsCommand, ElementName=Editor}" />
                     <Separator />
-                    <MenuItem Header="ZPL" Icon="{ui:SymbolIcon Code20}" Command="{Binding ViewModel.ShowZplPreviewCommand, ElementName=Editor}" />
+                    <MenuItem Header="{loc:Loc MenuZpl}" Icon="{ui:SymbolIcon Code20}" Command="{Binding ViewModel.ShowZplPreviewCommand, ElementName=Editor}" />
                     <Separator />
-                    <MenuItem Header="Exit" Icon="{ui:SymbolIcon DoorArrowLeft20}"
+                    <MenuItem Header="{loc:Loc MenuExit}" Icon="{ui:SymbolIcon DoorArrowLeft20}"
                               InputGestureText="Ctrl+Q" Click="FileExit_Click" />
                 </MenuItem>
-                <MenuItem Header="Settings" Icon="{ui:SymbolIcon Settings20}" Click="Settings_Click" />
+                <MenuItem Header="{loc:Loc MenuSettings}" Icon="{ui:SymbolIcon Settings20}">
+                    <MenuItem Header="{loc:Loc MenuPrinters}" Icon="{ui:SymbolIcon Print20}"
+                              Click="Printers_Click" />
+                    <MenuItem Header="{loc:Loc MenuLanguage}" Icon="{ui:SymbolIcon LocalLanguage20}">
+                        <MenuItem Header="Francais" IsCheckable="True"
+                                  IsChecked="{Binding ViewModel.IsFrench, ElementName=Editor, Mode=OneWay}"
+                                  Command="{Binding ViewModel.SetLanguageCommand, ElementName=Editor}"
+                                  CommandParameter="fr" />
+                        <MenuItem Header="English" IsCheckable="True"
+                                  IsChecked="{Binding ViewModel.IsEnglish, ElementName=Editor, Mode=OneWay}"
+                                  Command="{Binding ViewModel.SetLanguageCommand, ElementName=Editor}"
+                                  CommandParameter="en" />
+                    </MenuItem>
+                </MenuItem>
 
-                <MenuItem Header="Imprimer" Icon="{ui:SymbolIcon Print20}" InputGestureText="Ctrl+P" Command="{Binding ViewModel.PrintCommand, ElementName=Editor}" />
+                <MenuItem Header="{loc:Loc MenuPrint}" Icon="{ui:SymbolIcon Print20}" InputGestureText="Ctrl+P" Command="{Binding ViewModel.PrintCommand, ElementName=Editor}" />
             </Menu>
         </Grid>
 

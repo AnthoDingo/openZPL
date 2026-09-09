@@ -16,6 +16,7 @@
 
 using System.Net.Sockets;
 using System.Text;
+using openZPL.Resources;
 
 namespace openZPL.Services;
 
@@ -28,7 +29,7 @@ public static class ZebraPrinterService
     {
         if (printer is null || string.IsNullOrWhiteSpace(printer.IpAddress) ||
             printer.Port is <= 0 or > 65535)
-            return (false, "Aucune imprimante configuree ou selectionnee (menu Settings).");
+            return (false, Strings.PrintErrorNoPrinter);
 
         try
         {
@@ -47,11 +48,11 @@ public static class ZebraPrinterService
         }
         catch (OperationCanceledException)
         {
-            return (false, $"Timeout — imprimante {printer.IpAddress}:{printer.Port} inaccessible.");
+            return (false, string.Format(Strings.PrintErrorTimeout, printer.IpAddress, printer.Port));
         }
         catch (SocketException ex)
         {
-            return (false, $"Erreur reseau : {ex.Message}");
+            return (false, string.Format(Strings.PrintErrorNetwork, ex.Message));
         }
         catch (Exception ex)
         {

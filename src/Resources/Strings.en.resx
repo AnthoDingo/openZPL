@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="MenuFile" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="MenuNewLabel" xml:space="preserve">
+    <value>New label</value>
+  </data>
+  <data name="MenuOpen" xml:space="preserve">
+    <value>Open...</value>
+  </data>
+  <data name="MenuSave" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="MenuSaveAs" xml:space="preserve">
+    <value>Save as...</value>
+  </data>
+  <data name="MenuZpl" xml:space="preserve">
+    <value>ZPL</value>
+  </data>
+  <data name="MenuExit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="MenuPrinters" xml:space="preserve">
+    <value>Printers</value>
+  </data>
+  <data name="MenuLanguage" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="MenuPrint" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="ShortcutSaveAs" xml:space="preserve">
+    <value>Ctrl+Shift+S</value>
+  </data>
+  <data name="SectionAddElement" xml:space="preserve">
+    <value>ADD AN ELEMENT</value>
+  </data>
+  <data name="ElementText" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="ElementBarcode" xml:space="preserve">
+    <value>Barcode</value>
+  </data>
+  <data name="ElementImage" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="SectionLayers" xml:space="preserve">
+    <value>LAYERS</value>
+  </data>
+  <data name="LayerImage" xml:space="preserve">
+    <value>image</value>
+  </data>
+  <data name="LabelWidth" xml:space="preserve">
+    <value>Width</value>
+  </data>
+  <data name="LabelHeight" xml:space="preserve">
+    <value>Height</value>
+  </data>
+  <data name="LabelZoom" xml:space="preserve">
+    <value>Zoom</value>
+  </data>
+  <data name="PropertiesTitle" xml:space="preserve">
+    <value>Properties</value>
+  </data>
+  <data name="TipMoveUp" xml:space="preserve">
+    <value>Move up</value>
+  </data>
+  <data name="TipMoveDown" xml:space="preserve">
+    <value>Move down</value>
+  </data>
+  <data name="TipDelete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="SectionPositionSize" xml:space="preserve">
+    <value>POSITION AND SIZE (dots)</value>
+  </data>
+  <data name="SectionHAlign" xml:space="preserve">
+    <value>HORIZONTAL ALIGNMENT</value>
+  </data>
+  <data name="SectionVAlign" xml:space="preserve">
+    <value>VERTICAL ALIGNMENT</value>
+  </data>
+  <data name="TipAlignLeft" xml:space="preserve">
+    <value>Align left</value>
+  </data>
+  <data name="TipAlignCenter" xml:space="preserve">
+    <value>Center</value>
+  </data>
+  <data name="TipAlignRight" xml:space="preserve">
+    <value>Align right</value>
+  </data>
+  <data name="TipAlignTop" xml:space="preserve">
+    <value>Align top</value>
+  </data>
+  <data name="TipAlignMiddle" xml:space="preserve">
+    <value>Center vertically</value>
+  </data>
+  <data name="TipAlignBottom" xml:space="preserve">
+    <value>Align bottom</value>
+  </data>
+  <data name="SectionContent" xml:space="preserve">
+    <value>CONTENT</value>
+  </data>
+  <data name="LabelFontSize" xml:space="preserve">
+    <value>Font size</value>
+  </data>
+  <data name="LabelBold" xml:space="preserve">
+    <value>Bold</value>
+  </data>
+  <data name="LabelItalic" xml:space="preserve">
+    <value>Italic</value>
+  </data>
+  <data name="SectionValue" xml:space="preserve">
+    <value>VALUE</value>
+  </data>
+  <data name="SectionType" xml:space="preserve">
+    <value>TYPE</value>
+  </data>
+  <data name="LabelShowHri" xml:space="preserve">
+    <value>Show the value below</value>
+  </data>
+  <data name="SectionValueAlign" xml:space="preserve">
+    <value>VALUE ALIGNMENT</value>
+  </data>
+  <data name="SectionImageFile" xml:space="preserve">
+    <value>FILE (PNG/JPG, max 2 MB)</value>
+  </data>
+  <data name="ButtonChooseImage" xml:space="preserve">
+    <value>Choose an image...</value>
+  </data>
+  <data name="PrintTitle" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="PrintPrinter" xml:space="preserve">
+    <value>Printer</value>
+  </data>
+  <data name="PrintCopies" xml:space="preserve">
+    <value>Number of copies</value>
+  </data>
+  <data name="PrintNoPrinter" xml:space="preserve">
+    <value>No printer configured. Add one in Settings.</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ButtonPrint" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="PrintersTitle" xml:space="preserve">
+    <value>Printers</value>
+  </data>
+  <data name="BadgeDefault" xml:space="preserve">
+    <value>default</value>
+  </data>
+  <data name="ButtonAddPrinter" xml:space="preserve">
+    <value>Add a printer</value>
+  </data>
+  <data name="FieldName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="FieldIp" xml:space="preserve">
+    <value>IP address</value>
+  </data>
+  <data name="FieldPort" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="ToggleDefaultPrinter" xml:space="preserve">
+    <value>Use as default printer</value>
+  </data>
+  <data name="ButtonDelete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="ButtonSave" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="PrintersEmpty" xml:space="preserve">
+    <value>Add a printer to get started.</value>
+  </data>
+  <data name="NewPrinterName" xml:space="preserve">
+    <value>New printer</value>
+  </data>
+  <data name="PlaceholderPrinterName" xml:space="preserve">
+    <value>Warehouse 1</value>
+  </data>
+  <data name="ZplTitle" xml:space="preserve">
+    <value>ZPL preview — sample data</value>
+  </data>
+  <data name="ZplSize" xml:space="preserve">
+    <value>Size:</value>
+  </data>
+  <data name="ZplHint" xml:space="preserve">
+    <value>Check the rendering visually on</value>
+  </data>
+  <data name="DialogSaveLabel" xml:space="preserve">
+    <value>Save label</value>
+  </data>
+  <data name="DialogOpenLabel" xml:space="preserve">
+    <value>Open label</value>
+  </data>
+  <data name="DialogChooseImage" xml:space="preserve">
+    <value>Choose an image</value>
+  </data>
+  <data name="FilterImages" xml:space="preserve">
+    <value>Images (*.png;*.jpg;*.jpeg)|*.png;*.jpg;*.jpeg</value>
+  </data>
+  <data name="FilterLabelFile" xml:space="preserve">
+    <value>openZPL label (*.ozpl)|*.ozpl</value>
+  </data>
+  <data name="FilterAllFiles" xml:space="preserve">
+    <value>All files (*.*)|*.*</value>
+  </data>
+  <data name="FileTypeLabel" xml:space="preserve">
+    <value>openZPL label</value>
+  </data>
+  <data name="ErrorOpenTitle" xml:space="preserve">
+    <value>Cannot open</value>
+  </data>
+  <data name="ErrorSaveTitle" xml:space="preserve">
+    <value>Cannot save</value>
+  </data>
+  <data name="ErrorPrintTitle" xml:space="preserve">
+    <value>Cannot print</value>
+  </data>
+  <data name="ErrorNotOpenZpl" xml:space="preserve">
+    <value>“{0}” is not a usable openZPL file.</value>
+  </data>
+  <data name="ErrorUnknown" xml:space="preserve">
+    <value>Unknown error.</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="LabelDefaultName" xml:space="preserve">
+    <value>Label</value>
+  </data>
+  <data name="DefaultTextContent" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="PrintErrorNoPrinter" xml:space="preserve">
+    <value>No printer configured or selected (Settings menu).</value>
+  </data>
+  <data name="PrintErrorTimeout" xml:space="preserve">
+    <value>Timeout — printer {0}:{1} unreachable.</value>
+  </data>
+  <data name="PrintErrorNetwork" xml:space="preserve">
+    <value>Network error: {0}</value>
+  </data>
+</root>

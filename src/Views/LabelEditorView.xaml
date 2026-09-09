@@ -21,6 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:loc="clr-namespace:openZPL.Localization"
              xmlns:models="clr-namespace:openZPL.Models"
              xmlns:vm="clr-namespace:openZPL.ViewModels"
              mc:Ignorable="d"
@@ -104,23 +105,23 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
         <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <StackPanel>
 
-                <TextBlock Text="AJOUTER UN ELEMENT" FontSize="11" FontWeight="SemiBold" Opacity="0.6" Margin="0,0,0,8" />
+                <TextBlock Text="{loc:Loc SectionAddElement}" FontSize="11" FontWeight="SemiBold" Opacity="0.6" Margin="0,0,0,8" />
                 <ui:Button Style="{StaticResource PaletteButtonStyle}"
-                           Icon="{ui:SymbolIcon TextT20}" Content="Texte"
+                           Icon="{ui:SymbolIcon TextT20}" Content="{loc:Loc ElementText}"
                            Command="{Binding AddElementCommand}"
                            CommandParameter="{x:Static models:LabelElementType.Text}" />
                 <ui:Button Style="{StaticResource PaletteButtonStyle}"
-                           Icon="{ui:SymbolIcon BarcodeScanner20}" Content="Code-barres"
+                           Icon="{ui:SymbolIcon BarcodeScanner20}" Content="{loc:Loc ElementBarcode}"
                            Command="{Binding AddElementCommand}"
                            CommandParameter="{x:Static models:LabelElementType.Barcode}" />
                 <ui:Button Style="{StaticResource PaletteButtonStyle}"
-                           Icon="{ui:SymbolIcon Image20}" Content="Image"
+                           Icon="{ui:SymbolIcon Image20}" Content="{loc:Loc ElementImage}"
                            Command="{Binding AddElementCommand}"
                            CommandParameter="{x:Static models:LabelElementType.Image}" />
 
                 <Separator Margin="0,12" />
 
-                <TextBlock Text="CALQUES" FontSize="11" FontWeight="SemiBold" Opacity="0.6" Margin="0,0,0,8" />
+                <TextBlock Text="{loc:Loc SectionLayers}" FontSize="11" FontWeight="SemiBold" Opacity="0.6" Margin="0,0,0,8" />
                 <ListBox x:Name="LayersList"
                          ItemsSource="{Binding CurrentTemplate.Elements}"
                          SelectedItem="{Binding SelectedElement, Mode=OneWay}"
@@ -138,7 +139,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                                                     <Setter Property="Text" Value="{Binding BarcodeValue}" />
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding Type}" Value="Image">
-                                                    <Setter Property="Text" Value="image" />
+                                                    <Setter Property="Text" Value="{loc:Loc LayerImage}" />
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
@@ -163,12 +164,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
             <ui:Card Grid.Row="0" Margin="0,0,0,8">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Largeur" VerticalAlignment="Center" Margin="0,0,6,0" FontSize="12" Opacity="0.7" />
+                    <TextBlock Text="{loc:Loc LabelWidth}" VerticalAlignment="Center" Margin="0,0,6,0" FontSize="12" Opacity="0.7" />
                     <ui:NumberBox Value="{Binding CurrentTemplate.WidthMm}" MinWidth="90" Margin="0,0,4,0"
                                   Minimum="5" Maximum="600" SpinButtonPlacementMode="Compact" />
                     <TextBlock Text="mm" VerticalAlignment="Center" Margin="0,0,16,0" FontSize="12" Opacity="0.6" />
 
-                    <TextBlock Text="Hauteur" VerticalAlignment="Center" Margin="0,0,6,0" FontSize="12" Opacity="0.7" />
+                    <TextBlock Text="{loc:Loc LabelHeight}" VerticalAlignment="Center" Margin="0,0,6,0" FontSize="12" Opacity="0.7" />
                     <ui:NumberBox Value="{Binding CurrentTemplate.HeightMm}" MinWidth="90" Margin="0,0,4,0"
                                   Minimum="5" Maximum="600" SpinButtonPlacementMode="Compact" />
                     <TextBlock Text="mm" VerticalAlignment="Center" Margin="0,0,16,0" FontSize="12" Opacity="0.6" />
@@ -178,7 +179,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                               SelectedItem="{Binding CurrentTemplate.Dpi}" MinWidth="70" />
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="24,0,0,0">
-                        <TextBlock Text="Zoom" VerticalAlignment="Center" Margin="0,0,6,0" FontSize="12" Opacity="0.7" />
+                        <TextBlock Text="{loc:Loc LabelZoom}" VerticalAlignment="Center" Margin="0,0,6,0" FontSize="12" Opacity="0.7" />
                         <Slider Value="{Binding Scale}" Minimum="0.25" Maximum="4" SmallChange="0.05" LargeChange="0.25"
                                 Width="140" VerticalAlignment="Center" Margin="0,0,8,0" />
                         <TextBlock x:Name="ZoomPercentText" Text="{Binding ZoomPercent, StringFormat={}{0}%}"
@@ -311,7 +312,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                                                 <Grid Visibility="{Binding Type, Converter={StaticResource EnumMatchToVisibility}, ConverterParameter=Image}">
                                                     <Border Background="#E9ECEF"
                                                             Visibility="{Binding ImageData, Converter={StaticResource NullToVisibility}, ConverterParameter=Invert}">
-                                                        <TextBlock Text="Image" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                        <TextBlock Text="{loc:Loc ElementImage}" HorizontalAlignment="Center" VerticalAlignment="Center"
                                                                    FontSize="11" Foreground="Black" Opacity="0.6" />
                                                     </Border>
                                                     <Image Source="{Binding ImageData, Converter={StaticResource Base64ToImage}}" Stretch="Uniform"
@@ -373,18 +374,18 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
             <StackPanel Visibility="{Binding Converter={StaticResource NullToVisibility}}">
 
                 <Grid Margin="0,0,0,10">
-                    <TextBlock Text="Proprietes" FontWeight="SemiBold" FontSize="14" VerticalAlignment="Center" />
+                    <TextBlock Text="{loc:Loc PropertiesTitle}" FontWeight="SemiBold" FontSize="14" VerticalAlignment="Center" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <ui:Button Icon="{ui:SymbolIcon ArrowUp20}" Padding="5" Margin="0,0,4,0" ToolTip="Monter"
+                        <ui:Button Icon="{ui:SymbolIcon ArrowUp20}" Padding="5" Margin="0,0,4,0" ToolTip="{loc:Loc TipMoveUp}"
                                    Command="{Binding DataContext.MoveUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
-                        <ui:Button Icon="{ui:SymbolIcon ArrowDown20}" Padding="5" Margin="0,0,4,0" ToolTip="Descendre"
+                        <ui:Button Icon="{ui:SymbolIcon ArrowDown20}" Padding="5" Margin="0,0,4,0" ToolTip="{loc:Loc TipMoveDown}"
                                    Command="{Binding DataContext.MoveDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
-                        <ui:Button Icon="{ui:SymbolIcon Delete20}" Padding="5" Appearance="Danger" ToolTip="Supprimer"
+                        <ui:Button Icon="{ui:SymbolIcon Delete20}" Padding="5" Appearance="Danger" ToolTip="{loc:Loc TipDelete}"
                                    Command="{Binding DataContext.DeleteSelectedCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
                     </StackPanel>
                 </Grid>
 
-                <TextBlock Text="POSITION ET TAILLE (dots)" FontSize="10" FontWeight="SemiBold" Opacity="0.6" Margin="0,0,0,6" />
+                <TextBlock Text="{loc:Loc SectionPositionSize}" FontSize="10" FontWeight="SemiBold" Opacity="0.6" Margin="0,0,0,6" />
                 <Grid Margin="0,0,0,12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -405,44 +406,44 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                         <ui:NumberBox Value="{Binding Y}" Minimum="0" SpinButtonPlacementMode="Hidden" />
                     </StackPanel>
                     <StackPanel Grid.Row="2" Grid.Column="0">
-                        <TextBlock Text="Largeur" FontSize="11" Opacity="0.6" />
+                        <TextBlock Text="{loc:Loc LabelWidth}" FontSize="11" Opacity="0.6" />
                         <ui:NumberBox Value="{Binding Width}" Minimum="10" SpinButtonPlacementMode="Hidden" />
                     </StackPanel>
                     <StackPanel Grid.Row="2" Grid.Column="2">
-                        <TextBlock Text="Hauteur" FontSize="11" Opacity="0.6" />
+                        <TextBlock Text="{loc:Loc LabelHeight}" FontSize="11" Opacity="0.6" />
                         <ui:NumberBox Value="{Binding Height}" Minimum="10" SpinButtonPlacementMode="Hidden" />
                     </StackPanel>
                 </Grid>
 
                 <!-- Alignement (Texte uniquement — sans effet pour Code-barres/Image) -->
                 <StackPanel Visibility="{Binding Type, Converter={StaticResource EnumMatchToVisibility}, ConverterParameter=Text}">
-                    <TextBlock Text="ALIGNEMENT HORIZONTAL" FontSize="10" FontWeight="SemiBold" Opacity="0.6" Margin="0,0,0,6" />
+                    <TextBlock Text="{loc:Loc SectionHAlign}" FontSize="10" FontWeight="SemiBold" Opacity="0.6" Margin="0,0,0,6" />
                     <WrapPanel Margin="0,0,0,10">
-                        <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="HAlign" ToolTip="Aligner a gauche"
+                        <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="HAlign" ToolTip="{loc:Loc TipAlignLeft}"
                                      IsChecked="{Binding HAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Left}">
                             <ui:SymbolIcon Symbol="TextAlignLeft20" FontSize="16" />
                         </RadioButton>
-                        <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="HAlign" ToolTip="Centrer"
+                        <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="HAlign" ToolTip="{loc:Loc TipAlignCenter}"
                                      IsChecked="{Binding HAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Center}">
                             <ui:SymbolIcon Symbol="TextAlignCenter20" FontSize="16" />
                         </RadioButton>
-                        <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="HAlign" ToolTip="Aligner a droite" Margin="0"
+                        <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="HAlign" ToolTip="{loc:Loc TipAlignRight}" Margin="0"
                                      IsChecked="{Binding HAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Right}">
                             <ui:SymbolIcon Symbol="TextAlignRight20" FontSize="16" />
                         </RadioButton>
                     </WrapPanel>
 
-                    <TextBlock Text="ALIGNEMENT VERTICAL" FontSize="10" FontWeight="SemiBold" Opacity="0.6" Margin="0,0,0,6" />
+                    <TextBlock Text="{loc:Loc SectionVAlign}" FontSize="10" FontWeight="SemiBold" Opacity="0.6" Margin="0,0,0,6" />
                     <WrapPanel Margin="0,0,0,12">
-                        <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="VAlign" ToolTip="Aligner en haut"
+                        <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="VAlign" ToolTip="{loc:Loc TipAlignTop}"
                                      IsChecked="{Binding VAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Top}">
                             <ui:SymbolIcon Symbol="AlignTop20" FontSize="16" />
                         </RadioButton>
-                        <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="VAlign" ToolTip="Centrer verticalement"
+                        <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="VAlign" ToolTip="{loc:Loc TipAlignMiddle}"
                                      IsChecked="{Binding VAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Middle}">
                             <ui:SymbolIcon Symbol="AlignCenterVertical20" FontSize="16" />
                         </RadioButton>
-                        <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="VAlign" ToolTip="Aligner en bas" Margin="0"
+                        <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="VAlign" ToolTip="{loc:Loc TipAlignBottom}" Margin="0"
                                      IsChecked="{Binding VAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Bottom}">
                             <ui:SymbolIcon Symbol="AlignBottom20" FontSize="16" />
                         </RadioButton>
@@ -451,44 +452,44 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
                 <!-- Texte -->
                 <StackPanel Visibility="{Binding Type, Converter={StaticResource EnumMatchToVisibility}, ConverterParameter=Text}">
-                    <TextBlock Text="CONTENU" FontSize="10" FontWeight="SemiBold" Opacity="0.6" Margin="0,0,0,6" />
+                    <TextBlock Text="{loc:Loc SectionContent}" FontSize="10" FontWeight="SemiBold" Opacity="0.6" Margin="0,0,0,6" />
                     <ui:TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
                                 AcceptsReturn="True" Height="50" TextWrapping="Wrap" Margin="0,0,0,10" />
 
                     <StackPanel Margin="0,0,0,10">
-                        <TextBlock Text="Taille police" FontSize="11" Opacity="0.6" />
+                        <TextBlock Text="{loc:Loc LabelFontSize}" FontSize="11" Opacity="0.6" />
                         <ui:NumberBox Value="{Binding FontSize}" MinWidth="90" HorizontalAlignment="Left"
                                       Minimum="8" Maximum="300" SpinButtonPlacementMode="Hidden" Margin="0,0,0,8" />
                         <WrapPanel>
-                            <CheckBox Content="Gras" FontWeight="Bold" IsChecked="{Binding Bold}" Margin="0,0,16,0" />
-                            <CheckBox Content="Italique" FontStyle="Italic" IsChecked="{Binding Italic}" />
+                            <CheckBox Content="{loc:Loc LabelBold}" FontWeight="Bold" IsChecked="{Binding Bold}" Margin="0,0,16,0" />
+                            <CheckBox Content="{loc:Loc LabelItalic}" FontStyle="Italic" IsChecked="{Binding Italic}" />
                         </WrapPanel>
                     </StackPanel>
                 </StackPanel>
 
                 <!-- Code-barres -->
                 <StackPanel Visibility="{Binding Type, Converter={StaticResource EnumMatchToVisibility}, ConverterParameter=Barcode}">
-                    <TextBlock Text="VALEUR" FontSize="10" FontWeight="SemiBold" Opacity="0.6" Margin="0,0,0,6" />
+                    <TextBlock Text="{loc:Loc SectionValue}" FontSize="10" FontWeight="SemiBold" Opacity="0.6" Margin="0,0,0,6" />
                     <ui:TextBox Text="{Binding BarcodeValue, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10" />
 
-                    <TextBlock Text="TYPE" FontSize="10" FontWeight="SemiBold" Opacity="0.6" Margin="0,0,0,6" />
+                    <TextBlock Text="{loc:Loc SectionType}" FontSize="10" FontWeight="SemiBold" Opacity="0.6" Margin="0,0,0,6" />
                     <ComboBox ItemsSource="{Binding DataContext.BarcodeTypeValues, RelativeSource={RelativeSource AncestorType=UserControl}}"
                               SelectedItem="{Binding BarcodeType}" Margin="0,0,0,10" />
 
-                    <CheckBox Content="Afficher la valeur en dessous" IsChecked="{Binding ShowHri}" Margin="0,0,0,10" />
+                    <CheckBox Content="{loc:Loc LabelShowHri}" IsChecked="{Binding ShowHri}" Margin="0,0,0,10" />
 
                     <StackPanel Visibility="{Binding ShowHri, Converter={StaticResource BoolToVisibility}}">
-                        <TextBlock Text="ALIGNEMENT DE LA VALEUR" FontSize="10" FontWeight="SemiBold" Opacity="0.6" Margin="0,0,0,6" />
+                        <TextBlock Text="{loc:Loc SectionValueAlign}" FontSize="10" FontWeight="SemiBold" Opacity="0.6" Margin="0,0,0,6" />
                         <WrapPanel>
-                            <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="BarcodeHAlign" ToolTip="Aligner a gauche"
+                            <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="BarcodeHAlign" ToolTip="{loc:Loc TipAlignLeft}"
                                          IsChecked="{Binding HAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Left}">
                                 <ui:SymbolIcon Symbol="TextAlignLeft20" FontSize="16" />
                             </RadioButton>
-                            <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="BarcodeHAlign" ToolTip="Centrer"
+                            <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="BarcodeHAlign" ToolTip="{loc:Loc TipAlignCenter}"
                                          IsChecked="{Binding HAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Center}">
                                 <ui:SymbolIcon Symbol="TextAlignCenter20" FontSize="16" />
                             </RadioButton>
-                            <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="BarcodeHAlign" ToolTip="Aligner a droite" Margin="0"
+                            <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="BarcodeHAlign" ToolTip="{loc:Loc TipAlignRight}" Margin="0"
                                          IsChecked="{Binding HAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Right}">
                                 <ui:SymbolIcon Symbol="TextAlignRight20" FontSize="16" />
                             </RadioButton>
@@ -498,8 +499,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
                 <!-- Image -->
                 <StackPanel Visibility="{Binding Type, Converter={StaticResource EnumMatchToVisibility}, ConverterParameter=Image}">
-                    <TextBlock Text="FICHIER (PNG/JPG, max 2 Mo)" FontSize="10" FontWeight="SemiBold" Opacity="0.6" Margin="0,0,0,6" />
-                    <ui:Button Content="Choisir une image..." Icon="{ui:SymbolIcon Image20}" HorizontalAlignment="Stretch"
+                    <TextBlock Text="{loc:Loc SectionImageFile}" FontSize="10" FontWeight="SemiBold" Opacity="0.6" Margin="0,0,0,6" />
+                    <ui:Button Content="{loc:Loc ButtonChooseImage}" Icon="{ui:SymbolIcon Image20}" HorizontalAlignment="Stretch"
                                HorizontalContentAlignment="Left" Margin="0,0,0,8"
                                Command="{Binding DataContext.UploadImageCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
                     <Border BorderBrush="#40808080" BorderThickness="1" CornerRadius="4" Padding="4"

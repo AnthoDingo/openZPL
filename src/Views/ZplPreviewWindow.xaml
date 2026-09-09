@@ -19,7 +19,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-        Title="Apercu ZPL"
+        xmlns:loc="clr-namespace:openZPL.Localization"
+        Title="{loc:Loc ZplTitle}"
         Height="560" Width="640"
         MinHeight="360" MinWidth="480"
         WindowStartupLocation="CenterOwner"
@@ -32,7 +33,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ui:TitleBar Grid.Row="0" Title="Apercu ZPL — donnees d'exemple">
+        <ui:TitleBar Grid.Row="0" Title="{loc:Loc ZplTitle}">
             <ui:TitleBar.Icon>
                 <ui:ImageIcon Source="pack://application:,,,/openZPL;component/Resources/openZPL.ico" />
             </ui:TitleBar.Icon>
@@ -55,10 +56,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
         <StackPanel Grid.Row="2" Margin="16,0,16,16">
             <TextBlock TextWrapping="Wrap" Opacity="0.7" FontSize="12">
-                <Run Text="Taille :" />
+                <Run Text="{loc:Loc ZplSize}" />
                 <Run Text="{Binding SizeText, Mode=OneWay}" />
                 <LineBreak />
-                <Run Text="Testez visuellement le rendu sur" />
+                <Run Text="{loc:Loc ZplHint}" />
                 <Hyperlink Click="Hyperlink_Click">labelary.com/viewer.html</Hyperlink>
             </TextBlock>
         </StackPanel>

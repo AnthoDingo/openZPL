@@ -17,6 +17,7 @@
 using System.IO;
 using System.Text.Json;
 using openZPL.Models;
+using openZPL.Resources;
 
 namespace openZPL.Services;
 
@@ -42,11 +43,11 @@ public static class LabelFile
     public const int CurrentVersion = 1;
 
     /// <summary>Filtre pour SaveFileDialog — un seul type propose a l'enregistrement.</summary>
-    public const string SaveFilter = $"Etiquette openZPL (*{Extension})|*{Extension}";
+    public static string SaveFilter => Strings.FilterLabelFile;
 
     /// <summary>Filtre pour OpenFileDialog — "Tous les fichiers" en second choix,
     /// pour les fichiers qu'un utilisateur aurait renommes.</summary>
-    public const string OpenFilter = $"{SaveFilter}|Tous les fichiers (*.*)|*.*";
+    public static string OpenFilter => $"{Strings.FilterLabelFile}|{Strings.FilterAllFiles}";
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
