@@ -42,11 +42,17 @@ public partial class LabelEditorViewModel : ObservableObject
     [ObservableProperty] private PrinterProfile? _selectedPrinter;
     [ObservableProperty] private double _scale = 1.0;
 
+    /// <summary>Fichier .ozpl du projet ouvert, null tant qu'il n'a jamais ete
+    /// enregistre (Enregistrer demande alors ou le mettre).</summary>
+    [ObservableProperty] private string? _currentFilePath;
+
     public bool HasSelection => SelectedElement is not null;
     public bool NoSelection => SelectedElement is null;
     public bool IsSaved => Templates.Contains(CurrentTemplate);
     public int ZoomPercent => (int)Math.Round(Scale * 100);
-    public string WindowTitle => $"{CurrentTemplate.Name} - openZPL";
+    public string WindowTitle => CurrentFilePath is null
+        ? $"{CurrentTemplate.Name} - openZPL"
+        : $"{CurrentTemplate.Name} - {Path.GetFileName(CurrentFilePath)} - openZPL";
 
     public LabelEditorViewModel()
     {
@@ -90,25 +96,134 @@ public partial class LabelEditorViewModel : ObservableObject
 
     partial void OnScaleChanged(double value) => OnPropertyChanged(nameof(ZoomPercent));
 
+    partial void OnCurrentFilePathChanged(string? value) => OnPropertyChanged(nameof(WindowTitle));
+
     // ── Templates ─────────────────────────────────────────────────────────────
 
     [RelayCommand]
-    private void NewTemplate() => CurrentTemplate = new LabelTemplate();
+    private void NewTemplate()
+    {
+        CurrentFilePath = null;
+        CurrentTemplate = new LabelTemplate();
+    }
 
     [RelayCommand]
-    private void SelectTemplate(LabelTemplate template) => CurrentTemplate = template;
+    private void SelectTemplate(LabelTemplate template)
+    {
+        CurrentFilePath = null;
+        CurrentTemplate = template;
+    }
 
+    /// <summary>Enregistre dans le fichier .ozpl du projet, ou demande ou le
+    /// creer si le projet n'en a pas encore.</summary>
     [RelayCommand]
-    private void Save()
+    private async Task SaveAsync()
     {
         if (string.IsNullOrWhiteSpace(CurrentTemplate.Name)) return;
 
+        if (CurrentFilePath is null)
+        {
+            await SaveAsAsync();
+            return;
+        }
+
+        await WriteProjectAsync(CurrentFilePath);
+    }
+
+    [RelayCommand]
+    private async Task SaveAsAsync()
+    {
+        if (string.IsNullOrWhiteSpace(CurrentTemplate.Name)) return;
+
+        var dialog = new SaveFileDialog
+        {
+            Title = "Enregistrer le projet",
+            Filter = ProjectFile.SaveFilter,
+            DefaultExt = ProjectFile.Extension,
+            AddExtension = true,
+            FileName = ProjectFile.SuggestFileName(CurrentTemplate.Name),
+        };
+        if (dialog.ShowDialog() != true) return;
+
+        await WriteProjectAsync(dialog.FileName);
+    }
+
+    [RelayCommand]
+    private async Task OpenFileAsync()
+    {
+        var dialog = new OpenFileDialog
+        {
+            Title = "Ouvrir un projet",
+            Filter = ProjectFile.OpenFilter,
+            DefaultExt = ProjectFile.Extension,
+        };
+        if (dialog.ShowDialog() != true) return;
+
+        LabelTemplate? template;
+        try
+        {
+            template = ProjectFile.Load(dialog.FileName);
+        }
+        catch (IOException ex)
+        {
+            await ShowErrorAsync("Ouverture impossible", ex.Message);
+            return;
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            await ShowErrorAsync("Ouverture impossible", ex.Message);
+            return;
+        }
+
+        if (template is null)
+        {
+            await ShowErrorAsync("Ouverture impossible",
+                $"« {Path.GetFileName(dialog.FileName)} » n'est pas un projet openZPL exploitable.");
+            return;
+        }
+
+        CurrentTemplate = template;
+        CurrentFilePath = dialog.FileName;
+    }
+
+    /// <summary>Ecrit le fichier puis met la bibliotheque interne a jour, pour que
+    /// le projet reste propose dans « Modeles enregistres ».</summary>
+    private async Task WriteProjectAsync(string path)
+    {
         CurrentTemplate.UpdatedAt = DateTime.Now;
+        try
+        {
+            ProjectFile.Save(path, CurrentTemplate);
+        }
+        catch (IOException ex)
+        {
+            await ShowErrorAsync("Enregistrement impossible", ex.Message);
+            return;
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            await ShowErrorAsync("Enregistrement impossible", ex.Message);
+            return;
+        }
+
+        CurrentFilePath = path;
+
         if (!Templates.Contains(CurrentTemplate))
             Templates.Insert(0, CurrentTemplate);
 
         _templateStore.Save(Templates);
         OnPropertyChanged(nameof(IsSaved));
+    }
+
+    private static async Task ShowErrorAsync(string title, string message)
+    {
+        var box = new MessageBox
+        {
+            Title = title,
+            Content = message,
+            CloseButtonText = "Fermer",
+        };
+        await box.ShowDialogAsync();
     }
 
     [RelayCommand]
@@ -117,6 +232,7 @@ public partial class LabelEditorViewModel : ObservableObject
         LabelTemplate copy = CurrentTemplate.Clone(CurrentTemplate.Name + " (copie)");
         Templates.Insert(0, copy);
         _templateStore.Save(Templates);
+        CurrentFilePath = null;   // la copie n'est pas encore liee a un fichier
         CurrentTemplate = copy;
     }
 

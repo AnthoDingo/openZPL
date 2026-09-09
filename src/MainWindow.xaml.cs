@@ -32,8 +32,10 @@ public partial class MainWindow : FluentWindow
 
     public MainWindow()
     {
-        InitializeComponent();
+        // avant InitializeComponent : les KeyBinding du XAML lisent la propriete
+        // au chargement et la garderaient a null si elle etait affectee apres.
         OpenTemplateCommand = new RelayCommand(OpenTemplate);
+        InitializeComponent();
     }
 
     private void FileNew_Click(object sender, RoutedEventArgs e) =>
@@ -47,9 +49,6 @@ public partial class MainWindow : FluentWindow
         if (dialog.ShowDialog() == true && dialog.SelectedTemplate is not null)
             Editor.ViewModel.SelectTemplateCommand.Execute(dialog.SelectedTemplate);
     }
-
-    private void FileSave_Click(object sender, RoutedEventArgs e) =>
-        Editor.ViewModel.SaveCommand.Execute(null);
 
     private void FileExit_Click(object sender, RoutedEventArgs e)
     {

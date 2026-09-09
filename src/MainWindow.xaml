@@ -34,8 +34,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
         WindowState="Maximized">
     <ui:FluentWindow.InputBindings>
         <KeyBinding Key="N" Modifiers="Control" Command="{Binding ViewModel.NewTemplateCommand, ElementName=Editor}" />
-        <KeyBinding Key="O" Modifiers="Control" Command="{Binding OpenTemplateCommand, ElementName=RootWindow}" />
+        <KeyBinding Key="O" Modifiers="Control" Command="{Binding ViewModel.OpenFileCommand, ElementName=Editor}" />
+        <KeyBinding Key="O" Modifiers="Control+Shift" Command="{Binding OpenTemplateCommand, ElementName=RootWindow}" />
         <KeyBinding Key="S" Modifiers="Control" Command="{Binding ViewModel.SaveCommand, ElementName=Editor}" />
+        <KeyBinding Key="S" Modifiers="Control+Shift" Command="{Binding ViewModel.SaveAsCommand, ElementName=Editor}" />
         <KeyBinding Key="Q" Modifiers="Control" Command="{Binding ExitCommand, ElementName=RootWindow}" />
     </ui:FluentWindow.InputBindings>
     <Grid>
@@ -59,10 +61,18 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                 <MenuItem Header="File" Icon="{ui:SymbolIcon Document20}">
                     <MenuItem Header="Nouveau modele" Icon="{ui:SymbolIcon DocumentAdd20}"
                               InputGestureText="Ctrl+N" Click="FileNew_Click" />
-                    <MenuItem Header="Open" Icon="{ui:SymbolIcon FolderOpen20}"
-                              InputGestureText="Ctrl+O" Click="FileOpen_Click" />
+                    <MenuItem Header="Ouvrir un projet..." Icon="{ui:SymbolIcon FolderOpen20}"
+                              InputGestureText="Ctrl+O"
+                              Command="{Binding ViewModel.OpenFileCommand, ElementName=Editor}" />
+                    <MenuItem Header="Modeles enregistres..." Icon="{ui:SymbolIcon DocumentBulletList20}"
+                              InputGestureText="Ctrl+Maj+O" Click="FileOpen_Click" />
+                    <Separator />
                     <MenuItem Header="Enregistrer" Icon="{ui:SymbolIcon Save20}"
-                              InputGestureText="Ctrl+S" Click="FileSave_Click" />
+                              InputGestureText="Ctrl+S"
+                              Command="{Binding ViewModel.SaveCommand, ElementName=Editor}" />
+                    <MenuItem Header="Enregistrer sous..." Icon="{ui:SymbolIcon SaveEdit20}"
+                              InputGestureText="Ctrl+Maj+S"
+                              Command="{Binding ViewModel.SaveAsCommand, ElementName=Editor}" />
                     <Separator />
                     <MenuItem Header="ZPL" Icon="{ui:SymbolIcon Code20}" Command="{Binding ViewModel.ShowZplPreviewCommand, ElementName=Editor}" />
                     <Separator />
