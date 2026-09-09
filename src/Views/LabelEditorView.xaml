@@ -1,4 +1,4 @@
-<!--
+﻿<!--
 openZPL
 Copyright (C) 2026 AnthoDingo
 
@@ -40,6 +40,42 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                         <Border Background="{TemplateBinding Background}"
                                 BorderBrush="{DynamicResource SystemAccentColorPrimaryBrush}"
                                 BorderThickness="1.5" CornerRadius="1" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Bouton bascule a icone (barre d'alignement segmentee, facon Word) -->
+        <Style x:Key="IconToggleStyle" TargetType="RadioButton">
+            <Setter Property="Width" Value="34" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Margin" Value="0,0,4,0" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                BorderBrush="Transparent" BorderThickness="1" CornerRadius="4"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource AccentFillColorDefaultBrush}" />
+                                <Setter Property="Foreground" Value="{DynamicResource TextOnAccentFillColorPrimaryBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SubtleFillColorTertiaryBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -382,22 +418,34 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                 <StackPanel Visibility="{Binding Type, Converter={StaticResource EnumMatchToVisibility}, ConverterParameter=Text}">
                     <TextBlock Text="ALIGNEMENT HORIZONTAL" FontSize="10" FontWeight="SemiBold" Opacity="0.6" Margin="0,0,0,6" />
                     <WrapPanel Margin="0,0,0,10">
-                        <RadioButton Content="Gauche" GroupName="HAlign" Margin="0,0,12,4"
-                                     IsChecked="{Binding HAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Left}" />
-                        <RadioButton Content="Centre" GroupName="HAlign" Margin="0,0,12,4"
-                                     IsChecked="{Binding HAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Center}" />
-                        <RadioButton Content="Droite" GroupName="HAlign" Margin="0,0,0,4"
-                                     IsChecked="{Binding HAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Right}" />
+                        <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="HAlign" ToolTip="Aligner a gauche"
+                                     IsChecked="{Binding HAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Left}">
+                            <ui:SymbolIcon Symbol="TextAlignLeft20" FontSize="16" />
+                        </RadioButton>
+                        <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="HAlign" ToolTip="Centrer"
+                                     IsChecked="{Binding HAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Center}">
+                            <ui:SymbolIcon Symbol="TextAlignCenter20" FontSize="16" />
+                        </RadioButton>
+                        <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="HAlign" ToolTip="Aligner a droite" Margin="0"
+                                     IsChecked="{Binding HAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Right}">
+                            <ui:SymbolIcon Symbol="TextAlignRight20" FontSize="16" />
+                        </RadioButton>
                     </WrapPanel>
 
                     <TextBlock Text="ALIGNEMENT VERTICAL" FontSize="10" FontWeight="SemiBold" Opacity="0.6" Margin="0,0,0,6" />
                     <WrapPanel Margin="0,0,0,12">
-                        <RadioButton Content="Haut" GroupName="VAlign" Margin="0,0,12,4"
-                                     IsChecked="{Binding VAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Top}" />
-                        <RadioButton Content="Milieu" GroupName="VAlign" Margin="0,0,12,4"
-                                     IsChecked="{Binding VAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Middle}" />
-                        <RadioButton Content="Bas" GroupName="VAlign" Margin="0,0,0,4"
-                                     IsChecked="{Binding VAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Bottom}" />
+                        <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="VAlign" ToolTip="Aligner en haut"
+                                     IsChecked="{Binding VAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Top}">
+                            <ui:SymbolIcon Symbol="AlignTop20" FontSize="16" />
+                        </RadioButton>
+                        <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="VAlign" ToolTip="Centrer verticalement"
+                                     IsChecked="{Binding VAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Middle}">
+                            <ui:SymbolIcon Symbol="AlignCenterVertical20" FontSize="16" />
+                        </RadioButton>
+                        <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="VAlign" ToolTip="Aligner en bas" Margin="0"
+                                     IsChecked="{Binding VAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Bottom}">
+                            <ui:SymbolIcon Symbol="AlignBottom20" FontSize="16" />
+                        </RadioButton>
                     </WrapPanel>
                 </StackPanel>
 
@@ -432,12 +480,18 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                     <StackPanel Visibility="{Binding ShowHri, Converter={StaticResource BoolToVisibility}}">
                         <TextBlock Text="ALIGNEMENT DE LA VALEUR" FontSize="10" FontWeight="SemiBold" Opacity="0.6" Margin="0,0,0,6" />
                         <WrapPanel>
-                            <RadioButton Content="Gauche" GroupName="BarcodeHAlign" Margin="0,0,12,4"
-                                         IsChecked="{Binding HAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Left}" />
-                            <RadioButton Content="Centre" GroupName="BarcodeHAlign" Margin="0,0,12,4"
-                                         IsChecked="{Binding HAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Center}" />
-                            <RadioButton Content="Droite" GroupName="BarcodeHAlign" Margin="0,0,0,4"
-                                         IsChecked="{Binding HAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Right}" />
+                            <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="BarcodeHAlign" ToolTip="Aligner a gauche"
+                                         IsChecked="{Binding HAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Left}">
+                                <ui:SymbolIcon Symbol="TextAlignLeft20" FontSize="16" />
+                            </RadioButton>
+                            <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="BarcodeHAlign" ToolTip="Centrer"
+                                         IsChecked="{Binding HAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Center}">
+                                <ui:SymbolIcon Symbol="TextAlignCenter20" FontSize="16" />
+                            </RadioButton>
+                            <RadioButton Style="{StaticResource IconToggleStyle}" GroupName="BarcodeHAlign" ToolTip="Aligner a droite" Margin="0"
+                                         IsChecked="{Binding HAlign, Converter={StaticResource EnumToBoolean}, ConverterParameter=Right}">
+                                <ui:SymbolIcon Symbol="TextAlignRight20" FontSize="16" />
+                            </RadioButton>
                         </WrapPanel>
                     </StackPanel>
                 </StackPanel>
