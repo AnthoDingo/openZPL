@@ -22,30 +22,30 @@ namespace openZPL.Services;
 
 /// <summary>Enveloppe ecrite dans un fichier .ozpl. Le couple Format/Version
 /// permet de reconnaitre un fichier etranger et de faire evoluer le format
-/// sans casser les projets deja enregistres.</summary>
-public class ProjectFileData
+/// sans casser les fichiers deja enregistres.</summary>
+public class LabelFileData
 {
-    public string Format { get; set; } = ProjectFile.FormatMarker;
-    public int Version { get; set; } = ProjectFile.CurrentVersion;
+    public string Format { get; set; } = LabelFile.FormatMarker;
+    public int Version { get; set; } = LabelFile.CurrentVersion;
     public DateTime SavedAt { get; set; } = DateTime.Now;
     public LabelTemplate? Template { get; set; }
 }
 
-/// <summary>Lecture/ecriture d'un projet openZPL (une etiquette et ses elements)
-/// dans un fichier .ozpl — du JSON, comme le reste de la persistance de
-/// l'application. Les images sont deja stockees en base64 dans les elements,
-/// le fichier est donc autonome : il peut etre copie ou envoye tel quel.</summary>
-public static class ProjectFile
+/// <summary>Lecture/ecriture d'une etiquette et de ses elements dans un fichier
+/// .ozpl — du JSON, comme le reste de la persistance de l'application. Les
+/// images sont deja stockees en base64 dans les elements, le fichier est donc
+/// autonome : il peut etre copie ou envoye tel quel.</summary>
+public static class LabelFile
 {
     public const string Extension = ".ozpl";
     public const string FormatMarker = "openZPL";
     public const int CurrentVersion = 1;
 
     /// <summary>Filtre pour SaveFileDialog — un seul type propose a l'enregistrement.</summary>
-    public const string SaveFilter = $"Projet openZPL (*{Extension})|*{Extension}";
+    public const string SaveFilter = $"Etiquette openZPL (*{Extension})|*{Extension}";
 
     /// <summary>Filtre pour OpenFileDialog — "Tous les fichiers" en second choix,
-    /// pour les projets qu'un utilisateur aurait renommes.</summary>
+    /// pour les fichiers qu'un utilisateur aurait renommes.</summary>
     public const string OpenFilter = $"{SaveFilter}|Tous les fichiers (*.*)|*.*";
 
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -54,23 +54,23 @@ public static class ProjectFile
         PropertyNameCaseInsensitive = true,
     };
 
-    /// <summary>Ecrit le projet. Les exceptions d'ecriture (droits, chemin
+    /// <summary>Ecrit l'etiquette. Les exceptions d'ecriture (droits, chemin
     /// invalide, disque plein) remontent a l'appelant, qui previent l'utilisateur.</summary>
     public static void Save(string path, LabelTemplate template)
     {
-        var data = new ProjectFileData { Template = template };
+        var data = new LabelFileData { Template = template };
         File.WriteAllText(path, JsonSerializer.Serialize(data, JsonOptions));
     }
 
-    /// <summary>Relit un projet. Retourne null si le fichier n'est pas un projet
-    /// openZPL exploitable (JSON invalide, marqueur absent, version plus recente
-    /// que celle geree, ou etiquette manquante).</summary>
+    /// <summary>Relit un fichier. Retourne null si ce n'est pas un fichier openZPL
+    /// exploitable (JSON invalide, marqueur absent, version plus recente que celle
+    /// geree, ou etiquette manquante).</summary>
     public static LabelTemplate? Load(string path)
     {
-        ProjectFileData? data;
+        LabelFileData? data;
         try
         {
-            data = JsonSerializer.Deserialize<ProjectFileData>(File.ReadAllText(path), JsonOptions);
+            data = JsonSerializer.Deserialize<LabelFileData>(File.ReadAllText(path), JsonOptions);
         }
         catch (JsonException)
         {

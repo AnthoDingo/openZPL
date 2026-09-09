@@ -61,28 +61,6 @@ public partial class LabelElement : ObservableObject
     [ObservableProperty]
     [property: System.Text.Json.Serialization.JsonIgnore]
     private bool _isSelected;
-
-    public LabelElement Clone()
-    {
-        return new LabelElement
-        {
-            Type = Type,
-            X = X,
-            Y = Y,
-            Width = Width,
-            Height = Height,
-            HAlign = HAlign,
-            VAlign = VAlign,
-            Text = Text,
-            FontSize = FontSize,
-            Bold = Bold,
-            Italic = Italic,
-            BarcodeValue = BarcodeValue,
-            BarcodeType = BarcodeType,
-            ShowHri = ShowHri,
-            ImageData = ImageData,
-        };
-    }
 }
 
 /// <summary>
@@ -92,10 +70,7 @@ public partial class LabelTemplate : ObservableObject
 {
     public string Id { get; init; } = Guid.NewGuid().ToString("N");
 
-    [ObservableProperty] private string _name = "Nouveau modele";
-
-    /// <summary>Template par defaut utilise pour l'impression.</summary>
-    [ObservableProperty] private bool _isDefault;
+    [ObservableProperty] private string _name = "Etiquette";
 
     /// <summary>Largeur en dots (203 DPI). Ex: 812 = 4"</summary>
     [ObservableProperty] private int _widthDots = 812;
@@ -105,8 +80,6 @@ public partial class LabelTemplate : ObservableObject
 
     /// <summary>Resolution DPI de l'imprimante cible.</summary>
     [ObservableProperty] private int _dpi = 203;
-
-    [ObservableProperty] private DateTime _updatedAt = DateTime.Now;
 
     public ObservableCollection<LabelElement> Elements { get; set; } = [];
 
@@ -135,19 +108,4 @@ public partial class LabelTemplate : ObservableObject
         OnPropertyChanged(nameof(HeightMm));
     }
 
-    public LabelTemplate Clone(string newName)
-    {
-        var copy = new LabelTemplate
-        {
-            Name = newName,
-            IsDefault = false,
-            WidthDots = WidthDots,
-            HeightDots = HeightDots,
-            Dpi = Dpi,
-            UpdatedAt = DateTime.Now,
-        };
-        foreach (LabelElement el in Elements)
-            copy.Elements.Add(el.Clone());
-        return copy;
-    }
 }

@@ -28,27 +28,8 @@ namespace openZPL;
 public partial class MainWindow : FluentWindow
 {
     public ICommand ExitCommand { get; } = new RelayCommand(() => Application.Current.Shutdown());
-    public ICommand OpenTemplateCommand { get; }
 
-    public MainWindow()
-    {
-        // avant InitializeComponent : les KeyBinding du XAML lisent la propriete
-        // au chargement et la garderaient a null si elle etait affectee apres.
-        OpenTemplateCommand = new RelayCommand(OpenTemplate);
-        InitializeComponent();
-    }
-
-    private void FileNew_Click(object sender, RoutedEventArgs e) =>
-        Editor.ViewModel.NewTemplateCommand.Execute(null);
-
-    private void FileOpen_Click(object sender, RoutedEventArgs e) => OpenTemplate();
-
-    private void OpenTemplate()
-    {
-        var dialog = new OpenTemplateWindow(Editor.ViewModel.Templates) { Owner = this };
-        if (dialog.ShowDialog() == true && dialog.SelectedTemplate is not null)
-            Editor.ViewModel.SelectTemplateCommand.Execute(dialog.SelectedTemplate);
-    }
+    public MainWindow() => InitializeComponent();
 
     private void FileExit_Click(object sender, RoutedEventArgs e)
     {

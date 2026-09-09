@@ -28,10 +28,8 @@ namespace openZPL.ViewModels;
 
 public partial class LabelEditorViewModel : ObservableObject
 {
-    private readonly TemplateStore _templateStore = new();
     private readonly PrinterSettingsStore _printerStore = new();
 
-    public ObservableCollection<LabelTemplate> Templates { get; } = [];
     public ObservableCollection<PrinterProfile> Printers { get; } = [];
 
     public Array BarcodeTypeValues => Enum.GetValues(typeof(LabelBarcodeType));
@@ -42,28 +40,20 @@ public partial class LabelEditorViewModel : ObservableObject
     [ObservableProperty] private PrinterProfile? _selectedPrinter;
     [ObservableProperty] private double _scale = 1.0;
 
-    /// <summary>Fichier .ozpl du projet ouvert, null tant qu'il n'a jamais ete
-    /// enregistre (Enregistrer demande alors ou le mettre).</summary>
+    /// <summary>Fichier .ozpl ouvert, null tant que l'etiquette n'a jamais ete
+    /// enregistree (Enregistrer demande alors ou la mettre).</summary>
     [ObservableProperty] private string? _currentFilePath;
 
     public bool HasSelection => SelectedElement is not null;
     public bool NoSelection => SelectedElement is null;
-    public bool IsSaved => Templates.Contains(CurrentTemplate);
     public int ZoomPercent => (int)Math.Round(Scale * 100);
+    /// <summary>Le fichier ouvert identifie l'etiquette ; tant qu'elle n'est pas
+    /// enregistree, on affiche son nom.</summary>
     public string WindowTitle => CurrentFilePath is null
         ? $"{CurrentTemplate.Name} - openZPL"
-        : $"{CurrentTemplate.Name} - {Path.GetFileName(CurrentFilePath)} - openZPL";
+        : $"{Path.GetFileName(CurrentFilePath)} - openZPL";
 
-    public LabelEditorViewModel()
-    {
-        foreach (LabelTemplate t in _templateStore.Load().OrderByDescending(t => t.UpdatedAt))
-            Templates.Add(t);
-
-        if (Templates.Count > 0)
-            CurrentTemplate = Templates[0];
-
-        LoadPrinters();
-    }
+    public LabelEditorViewModel() => LoadPrinters();
 
     /// <summary>Recharge la liste des imprimantes configurees depuis le disque —
     /// appele aussi apres fermeture de la fenetre Settings pour refleter les changements.</summary>
@@ -90,7 +80,6 @@ public partial class LabelEditorViewModel : ObservableObject
     partial void OnCurrentTemplateChanged(LabelTemplate value)
     {
         SelectedElement = null;
-        OnPropertyChanged(nameof(IsSaved));
         OnPropertyChanged(nameof(WindowTitle));
     }
 
@@ -98,24 +87,17 @@ public partial class LabelEditorViewModel : ObservableObject
 
     partial void OnCurrentFilePathChanged(string? value) => OnPropertyChanged(nameof(WindowTitle));
 
-    // ── Templates ─────────────────────────────────────────────────────────────
+    // ── Fichier ───────────────────────────────────────────────────────────────
 
     [RelayCommand]
-    private void NewTemplate()
+    private void New()
     {
         CurrentFilePath = null;
         CurrentTemplate = new LabelTemplate();
     }
 
-    [RelayCommand]
-    private void SelectTemplate(LabelTemplate template)
-    {
-        CurrentFilePath = null;
-        CurrentTemplate = template;
-    }
-
-    /// <summary>Enregistre dans le fichier .ozpl du projet, ou demande ou le
-    /// creer si le projet n'en a pas encore.</summary>
+    /// <summary>Enregistre dans le fichier .ozpl ouvert, ou demande ou le creer
+    /// si l'etiquette n'en a pas encore.</summary>
     [RelayCommand]
     private async Task SaveAsync()
     {
@@ -127,7 +109,7 @@ public partial class LabelEditorViewModel : ObservableObject
             return;
         }
 
-        await WriteProjectAsync(CurrentFilePath);
+        await WriteFileAsync(CurrentFilePath);
     }
 
     [RelayCommand]
@@ -137,15 +119,15 @@ public partial class LabelEditorViewModel : ObservableObject
 
         var dialog = new SaveFileDialog
         {
-            Title = "Enregistrer le projet",
-            Filter = ProjectFile.SaveFilter,
-            DefaultExt = ProjectFile.Extension,
+            Title = "Enregistrer l'etiquette",
+            Filter = LabelFile.SaveFilter,
+            DefaultExt = LabelFile.Extension,
             AddExtension = true,
-            FileName = ProjectFile.SuggestFileName(CurrentTemplate.Name),
+            FileName = LabelFile.SuggestFileName(CurrentTemplate.Name),
         };
         if (dialog.ShowDialog() != true) return;
 
-        await WriteProjectAsync(dialog.FileName);
+        await WriteFileAsync(dialog.FileName);
     }
 
     [RelayCommand]
@@ -153,16 +135,16 @@ public partial class LabelEditorViewModel : ObservableObject
     {
         var dialog = new OpenFileDialog
         {
-            Title = "Ouvrir un projet",
-            Filter = ProjectFile.OpenFilter,
-            DefaultExt = ProjectFile.Extension,
+            Title = "Ouvrir une etiquette",
+            Filter = LabelFile.OpenFilter,
+            DefaultExt = LabelFile.Extension,
         };
         if (dialog.ShowDialog() != true) return;
 
         LabelTemplate? template;
         try
         {
-            template = ProjectFile.Load(dialog.FileName);
+            template = LabelFile.Load(dialog.FileName);
         }
         catch (IOException ex)
         {
@@ -178,7 +160,7 @@ public partial class LabelEditorViewModel : ObservableObject
         if (template is null)
         {
             await ShowErrorAsync("Ouverture impossible",
-                $"« {Path.GetFileName(dialog.FileName)} » n'est pas un projet openZPL exploitable.");
+                $"« {Path.GetFileName(dialog.FileName)} » n'est pas un fichier openZPL exploitable.");
             return;
         }
 
@@ -186,14 +168,11 @@ public partial class LabelEditorViewModel : ObservableObject
         CurrentFilePath = dialog.FileName;
     }
 
-    /// <summary>Ecrit le fichier puis met la bibliotheque interne a jour, pour que
-    /// le projet reste propose dans « Modeles enregistres ».</summary>
-    private async Task WriteProjectAsync(string path)
+    private async Task WriteFileAsync(string path)
     {
-        CurrentTemplate.UpdatedAt = DateTime.Now;
         try
         {
-            ProjectFile.Save(path, CurrentTemplate);
+            LabelFile.Save(path, CurrentTemplate);
         }
         catch (IOException ex)
         {
@@ -207,12 +186,6 @@ public partial class LabelEditorViewModel : ObservableObject
         }
 
         CurrentFilePath = path;
-
-        if (!Templates.Contains(CurrentTemplate))
-            Templates.Insert(0, CurrentTemplate);
-
-        _templateStore.Save(Templates);
-        OnPropertyChanged(nameof(IsSaved));
     }
 
     private static async Task ShowErrorAsync(string title, string message)
@@ -224,51 +197,6 @@ public partial class LabelEditorViewModel : ObservableObject
             CloseButtonText = "Fermer",
         };
         await box.ShowDialogAsync();
-    }
-
-    [RelayCommand]
-    private void Duplicate()
-    {
-        LabelTemplate copy = CurrentTemplate.Clone(CurrentTemplate.Name + " (copie)");
-        Templates.Insert(0, copy);
-        _templateStore.Save(Templates);
-        CurrentFilePath = null;   // la copie n'est pas encore liee a un fichier
-        CurrentTemplate = copy;
-    }
-
-    [RelayCommand]
-    private void Activate(LabelTemplate? template)
-    {
-        template ??= CurrentTemplate;
-        if (!Templates.Contains(template)) return;
-
-        foreach (LabelTemplate t in Templates)
-            t.IsDefault = t.Id == template.Id;
-
-        if (template.Id == CurrentTemplate.Id) OnPropertyChanged(nameof(CurrentTemplate));
-
-        _templateStore.Save(Templates);
-    }
-
-    [RelayCommand]
-    private async Task DeleteAsync()
-    {
-        if (CurrentTemplate.IsDefault) return;
-
-        var box = new MessageBox
-        {
-            Title = "Supprimer",
-            Content = $"Supprimer « {CurrentTemplate.Name} » ? Cette action est irreversible.",
-            PrimaryButtonText = "Supprimer",
-            PrimaryButtonAppearance = ControlAppearance.Danger,
-            CloseButtonText = "Annuler",
-        };
-        MessageBoxResult result = await box.ShowDialogAsync();
-        if (result != MessageBoxResult.Primary) return;
-
-        Templates.Remove(CurrentTemplate);
-        _templateStore.Save(Templates);
-        NewTemplate();
     }
 
     // ── Elements ──────────────────────────────────────────────────────────────

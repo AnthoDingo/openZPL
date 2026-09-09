@@ -33,9 +33,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
         WindowBackdropType="Mica"
         WindowState="Maximized">
     <ui:FluentWindow.InputBindings>
-        <KeyBinding Key="N" Modifiers="Control" Command="{Binding ViewModel.NewTemplateCommand, ElementName=Editor}" />
+        <KeyBinding Key="N" Modifiers="Control" Command="{Binding ViewModel.NewCommand, ElementName=Editor}" />
         <KeyBinding Key="O" Modifiers="Control" Command="{Binding ViewModel.OpenFileCommand, ElementName=Editor}" />
-        <KeyBinding Key="O" Modifiers="Control+Shift" Command="{Binding OpenTemplateCommand, ElementName=RootWindow}" />
         <KeyBinding Key="S" Modifiers="Control" Command="{Binding ViewModel.SaveCommand, ElementName=Editor}" />
         <KeyBinding Key="S" Modifiers="Control+Shift" Command="{Binding ViewModel.SaveAsCommand, ElementName=Editor}" />
         <KeyBinding Key="Q" Modifiers="Control" Command="{Binding ExitCommand, ElementName=RootWindow}" />
@@ -59,13 +58,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
             <Menu Grid.Column="0" VerticalAlignment="Center">
                 <MenuItem Header="File" Icon="{ui:SymbolIcon Document20}">
-                    <MenuItem Header="Nouveau modele" Icon="{ui:SymbolIcon DocumentAdd20}"
-                              InputGestureText="Ctrl+N" Click="FileNew_Click" />
-                    <MenuItem Header="Ouvrir un projet..." Icon="{ui:SymbolIcon FolderOpen20}"
+                    <MenuItem Header="Nouvelle etiquette" Icon="{ui:SymbolIcon DocumentAdd20}"
+                              InputGestureText="Ctrl+N"
+                              Command="{Binding ViewModel.NewCommand, ElementName=Editor}" />
+                    <MenuItem Header="Ouvrir..." Icon="{ui:SymbolIcon FolderOpen20}"
                               InputGestureText="Ctrl+O"
                               Command="{Binding ViewModel.OpenFileCommand, ElementName=Editor}" />
-                    <MenuItem Header="Modeles enregistres..." Icon="{ui:SymbolIcon DocumentBulletList20}"
-                              InputGestureText="Ctrl+Maj+O" Click="FileOpen_Click" />
                     <Separator />
                     <MenuItem Header="Enregistrer" Icon="{ui:SymbolIcon Save20}"
                               InputGestureText="Ctrl+S"
