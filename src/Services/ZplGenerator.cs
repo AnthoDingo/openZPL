@@ -25,7 +25,9 @@ namespace openZPL.Services;
 /// <summary>Genere le code ZPL II correspondant a un LabelTemplate.</summary>
 public static class ZplGenerator
 {
-    public static string Generate(LabelTemplate template)
+    /// <param name="copies">Nombre d'etiquettes a imprimer. Traduit en ^PQ :
+    /// c'est l'imprimante qui repete l'etiquette, un seul envoi suffit.</param>
+    public static string Generate(LabelTemplate template, int copies = 1)
     {
         var sb = new StringBuilder();
         sb.AppendLine("^XA");
@@ -36,6 +38,9 @@ public static class ZplGenerator
 
         foreach (LabelElement el in template.Elements)
             sb.Append(RenderElement(el));
+
+        if (copies > 1)
+            sb.AppendLine($"^PQ{copies},0,0,N");      // quantite
 
         sb.AppendLine("^XZ");
         return sb.ToString();

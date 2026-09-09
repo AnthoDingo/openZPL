@@ -335,7 +335,19 @@ public partial class LabelEditorViewModel : ObservableObject
     [RelayCommand]
     private async Task PrintAsync()
     {
-        string zpl = ZplGenerator.Generate(CurrentTemplate);
-        await ZebraPrinterService.PrintZplAsync(SelectedPrinter, zpl);
+        var dialog = new PrintWindow(Printers, SelectedPrinter)
+        {
+            Owner = System.Windows.Application.Current.MainWindow
+        };
+        if (dialog.ShowDialog() != true) return;
+
+        // le choix devient celui propose a la prochaine impression
+        SelectedPrinter = dialog.SelectedPrinter;
+
+        string zpl = ZplGenerator.Generate(CurrentTemplate, dialog.Copies);
+        (bool ok, string? error) = await ZebraPrinterService.PrintZplAsync(SelectedPrinter, zpl);
+
+        if (!ok)
+            await ShowErrorAsync("Impression impossible", error ?? "Erreur inconnue.");
     }
 }
