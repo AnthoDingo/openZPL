@@ -314,7 +314,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                                                         <TextBlock Text="Image" HorizontalAlignment="Center" VerticalAlignment="Center"
                                                                    FontSize="11" Foreground="Black" Opacity="0.6" />
                                                     </Border>
-                                                    <Image Source="{Binding ImageData}" Stretch="Uniform"
+                                                    <Image Source="{Binding ImageData, Converter={StaticResource Base64ToImage}}" Stretch="Uniform"
                                                            Visibility="{Binding ImageData, Converter={StaticResource NullToVisibility}}" />
                                                 </Grid>
                                             </Grid>
@@ -504,7 +504,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                                Command="{Binding DataContext.UploadImageCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
                     <Border BorderBrush="#40808080" BorderThickness="1" CornerRadius="4" Padding="4"
                             Visibility="{Binding ImageData, Converter={StaticResource NullToVisibility}}">
-                        <Image Source="{Binding ImageData}" Stretch="Uniform" MaxHeight="140" />
+                        <Image Source="{Binding ImageData, Converter={StaticResource Base64ToImage}}" Stretch="Uniform" MaxHeight="140" />
                     </Border>
                 </StackPanel>
 

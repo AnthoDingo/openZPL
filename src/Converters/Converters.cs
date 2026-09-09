@@ -16,6 +16,7 @@
 
 using System.Collections;
 using System.Globalization;
+using System.IO;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
@@ -163,6 +164,40 @@ public sealed class CountToVisibilityConverter : IValueConverter
         bool empty = count == 0;
         if (string.Equals(parameter as string, "Invert", StringComparison.OrdinalIgnoreCase)) empty = !empty;
         return empty ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    public object ConvertBack(object value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>Image encodee en base64 (avec ou sans prefixe "data:image/png;base64,")
+/// -> BitmapImage. WPF ne sait pas resoudre une data URI tout seul.</summary>
+public sealed class Base64ToImageConverter : IValueConverter
+{
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is not string data || data.Length == 0) return null;
+
+        // "data:image/png;base64,XXXX" -> "XXXX" (une data URI brute est aussi acceptee)
+        int comma = data.IndexOf(',');
+        if (data.StartsWith("data:", StringComparison.OrdinalIgnoreCase) && comma >= 0)
+            data = data[(comma + 1)..];
+
+        try
+        {
+            using var stream = new MemoryStream(System.Convert.FromBase64String(data));
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;   // libere le flux des la fin du chargement
+            bitmap.StreamSource = stream;
+            bitmap.EndInit();
+            bitmap.Freeze();
+            return bitmap;
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     public object ConvertBack(object value, Type targetType, object? parameter, CultureInfo culture) =>
