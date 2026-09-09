@@ -32,7 +32,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <ui:TitleBar Grid.Row="0" Title="Imprimer" ShowMaximize="False" ShowMinimize="False" />
+        <ui:TitleBar Grid.Row="0" Title="Imprimer" ShowMaximize="False" ShowMinimize="False">
+            <ui:TitleBar.Icon>
+                <ui:ImageIcon Source="pack://application:,,,/openZPL;component/Resources/openZPL.ico" />
+            </ui:TitleBar.Icon>
+        </ui:TitleBar>
 
         <Grid Grid.Row="1" Margin="24,8,24,24">
             <Grid.RowDefinitions>

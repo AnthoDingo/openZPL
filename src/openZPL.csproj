@@ -10,6 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- ApplicationIcon vise le fichier sur disque ; Resource le rend aussi
+         accessible en pack:// pour les barres de titre -->
+    <Resource Include="Resources\openZPL.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageReference Include="WPF-UI" Version="4.3.0" />
     <PackageReference Include="ZXing.Net" Version="0.16.11" />

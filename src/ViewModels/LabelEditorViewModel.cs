@@ -153,10 +153,17 @@ public partial class LabelEditorViewModel : ObservableObject
         };
         if (dialog.ShowDialog() != true) return;
 
+        await LoadFileAsync(dialog.FileName);
+    }
+
+    /// <summary>Ouvre un fichier .ozpl deja designe — par la boite de dialogue,
+    /// ou par un double-clic dans l'Explorateur.</summary>
+    public async Task LoadFileAsync(string path)
+    {
         LabelTemplate? template;
         try
         {
-            template = LabelFile.Load(dialog.FileName);
+            template = LabelFile.Load(path);
         }
         catch (IOException ex)
         {
@@ -172,13 +179,13 @@ public partial class LabelEditorViewModel : ObservableObject
         if (template is null)
         {
             await ShowErrorAsync("Ouverture impossible",
-                $"« {Path.GetFileName(dialog.FileName)} » n'est pas un fichier openZPL exploitable.");
+                $"« {Path.GetFileName(path)} » n'est pas un fichier openZPL exploitable.");
             return;
         }
 
         CurrentTemplate = template;
-        CurrentFilePath = dialog.FileName;
-        RememberDirectory(dialog.FileName);
+        CurrentFilePath = path;
+        RememberDirectory(path);
     }
 
     /// <summary>Dossier ou rouvrir les boites de dialogue : celui du fichier

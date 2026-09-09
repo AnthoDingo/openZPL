@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 using System.Windows;
+using openZPL.Services;
 using Wpf.Ui.Appearance;
 
 namespace openZPL;
@@ -24,10 +25,18 @@ namespace openZPL;
 /// </summary>
 public partial class App : Application
 {
+    /// <summary>Fichier .ozpl passe en ligne de commande — un double-clic dans
+    /// l'Explorateur, lu par MainWindow une fois l'interface prete.</summary>
+    public static string? StartupFilePath { get; private set; }
+
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
 
         ApplicationThemeManager.Apply(ApplicationTheme.Dark);
+        FileAssociation.EnsureRegistered();
+
+        if (e.Args.Length > 0)
+            StartupFilePath = e.Args[0];
     }
 }

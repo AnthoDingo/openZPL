@@ -29,7 +29,17 @@ public partial class MainWindow : FluentWindow
 {
     public ICommand ExitCommand { get; } = new RelayCommand(() => Application.Current.Shutdown());
 
-    public MainWindow() => InitializeComponent();
+    public MainWindow()
+    {
+        InitializeComponent();
+        Loaded += MainWindow_Loaded;
+    }
+
+    private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (App.StartupFilePath is { } path)
+            await Editor.ViewModel.LoadFileAsync(path);
+    }
 
     private void FileExit_Click(object sender, RoutedEventArgs e)
     {
