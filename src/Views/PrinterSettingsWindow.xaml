@@ -31,7 +31,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <ui:TitleBar Grid.Row="0" Title="Parametres" />
+        <ui:TitleBar Grid.Row="0" Title="Parametres" ShowMaximize="False" />
 
         <Grid Grid.Row="1" Margin="24,16,24,24">
             <Grid.ColumnDefinitions>
@@ -46,23 +46,25 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
             <StackPanel Grid.Column="0">
                 <TextBlock Text="Imprimantes" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,8" />
 
-                <ListBox x:Name="PrintersList" Height="300"
-                         SelectionChanged="PrintersList_SelectionChanged">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Margin="0,3">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="12" />
-                                    <Border Background="#2E7D32" CornerRadius="3" Padding="4,0" Margin="6,0,0,0"
-                                            Visibility="{Binding IsDefault, Converter={StaticResource BoolToVisibility}}">
-                                        <TextBlock Text="defaut" FontSize="9" Foreground="White" />
-                                    </Border>
+                <Border Height="300" BorderBrush="#40808080" BorderThickness="1" CornerRadius="4">
+                    <ListBox x:Name="PrintersList" BorderThickness="0" Background="Transparent"
+                             SelectionChanged="PrintersList_SelectionChanged">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="0,3">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="12" />
+                                        <Border Background="#2E7D32" CornerRadius="3" Padding="4,0" Margin="6,0,0,0"
+                                                Visibility="{Binding IsDefault, Converter={StaticResource BoolToVisibility}}">
+                                            <TextBlock Text="defaut" FontSize="9" Foreground="White" />
+                                        </Border>
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding IpPort}" FontSize="11" Opacity="0.6" />
                                 </StackPanel>
-                                <TextBlock Text="{Binding IpPort}" FontSize="11" Opacity="0.6" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Border>
 
                 <ui:Button Content="Ajouter une imprimante" Icon="{ui:SymbolIcon Add24}"
                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
@@ -72,7 +74,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
             <!-- ══════════════════════════════════════════════════════════
                  DETAIL DE L'IMPRIMANTE SELECTIONNEE
                  ══════════════════════════════════════════════════════════ -->
-            <StackPanel Grid.Column="2" x:Name="DetailPanel" IsEnabled="False">
+            <StackPanel Grid.Column="2" x:Name="DetailPanel" IsEnabled="False"
+                        Visibility="{Binding IsEnabled, RelativeSource={RelativeSource Self},
+                                             Converter={StaticResource BoolToVisibility}}">
                 <TextBlock Text="Nom" Margin="0,0,0,4" />
                 <ui:TextBox x:Name="NameTextBox" PlaceholderText="Entrepot 1" Margin="0,0,0,12" />
 
@@ -93,7 +97,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
             </StackPanel>
 
             <TextBlock Grid.Column="2" Text="Ajoutez une imprimante pour commencer."
-                       Opacity="0.6" FontSize="12"
+                       Opacity="0.6" FontSize="12" TextWrapping="Wrap" TextAlignment="Center"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"
                        Visibility="{Binding IsEnabled, ElementName=DetailPanel, Converter={StaticResource BoolToVisibility}, ConverterParameter=Invert}" />
         </Grid>
     </Grid>
