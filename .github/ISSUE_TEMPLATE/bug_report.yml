@@ -1,0 +1,94 @@
+name: Rapport de bogue
+description: Signaler un dysfonctionnement d'openZPL
+title: "[Bogue] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de prendre le temps de signaler ce problème.
+        Vérifiez d'abord qu'une [issue existante](https://github.com/AnthoDingo/openZPL/issues?q=is%3Aissue) ne décrit pas déjà le même bogue.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Décrivez clairement le problème rencontré.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Étapes pour reproduire
+      description: Les actions à effectuer pour retrouver le problème.
+      placeholder: |
+        1. Ouvrir l'application
+        2. Ajouter un calque « Code-barres »
+        3. Cliquer sur « Imprimer »
+        4. Observer l'erreur
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportement attendu
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Comportement observé
+      description: Incluez le message d'erreur complet si une exception est affichée.
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version d'openZPL
+      description: Visible dans la fenêtre « À propos » ou dans le nom de l'installeur.
+      placeholder: "1.0.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: install
+    attributes:
+      label: Mode d'installation
+      options:
+        - Installeur (openZPL-Setup)
+        - Version portable / dossier de publication
+        - Compilée depuis les sources
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Version de Windows
+      placeholder: "Windows 11 24H2 (26100)"
+    validations:
+      required: true
+
+  - type: input
+    id: printer
+    attributes:
+      label: Imprimante / modèle d'étiqueteuse
+      description: À renseigner si le problème concerne l'impression ou l'envoi ZPL.
+      placeholder: "Zebra ZD421 (pilote Windows)"
+
+  - type: textarea
+    id: zpl
+    attributes:
+      label: Code ZPL ou fichier .ozpl concerné
+      description: Collez le ZPL généré ou joignez le fichier .ozpl permettant de reproduire.
+      render: text
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Informations complémentaires
+      description: Captures d'écran, journaux, contexte particulier.

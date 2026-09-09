@@ -1,0 +1,54 @@
+name: Demande de fonctionnalité
+description: Proposer une amélioration ou une nouvelle fonctionnalité
+title: "[Fonctionnalité] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci pour votre proposition. Vérifiez d'abord qu'une demande similaire n'a pas déjà été ouverte.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problème ou besoin
+      description: Quel usage est aujourd'hui difficile ou impossible ?
+      placeholder: "Actuellement, je ne peux pas ..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solution souhaitée
+      description: Décrivez le comportement attendu, si possible du point de vue de l'utilisateur.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Partie concernée
+      options:
+        - Éditeur d'étiquettes (calques, mise en page)
+        - Codes-barres / QR codes
+        - Génération et export ZPL
+        - Impression et gestion des imprimantes
+        - Fichiers .ozpl (ouverture, enregistrement, association)
+        - Interface, paramètres et traduction
+        - Installeur / mise à jour
+        - Autre
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives envisagées
+      description: Contournements actuels ou autres approches possibles.
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Informations complémentaires
+      description: Maquettes, captures d'écran, exemples de ZPL, références d'autres logiciels.
